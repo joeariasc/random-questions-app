@@ -77,6 +77,9 @@ android {
         }
 
         defaults {
+
+            mergeWith("debug")
+            
             filters { // common filters for all default Kover tasks
                 excludes {
                     classes(
