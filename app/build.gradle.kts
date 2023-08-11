@@ -75,6 +75,30 @@ android {
                 )
             }
         }
+
+        defaults {
+            filters { // common filters for all default Kover tasks
+                excludes {
+                    classes(
+                        "*_Impl*",
+                        "*Activity",
+                        "*Application*",
+                        "*.BuildConfig"
+                    )
+                    packages(
+                        "android.*"
+                    )
+                }
+            }
+
+            xml {
+                onCheck = true
+            }
+
+            html {
+                onCheck = true
+            }
+        }
     }
 
 }
