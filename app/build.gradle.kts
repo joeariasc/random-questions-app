@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.firebase.appdistribution")
 }
 
 android {
@@ -37,6 +38,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        debug {
+            firebaseAppDistribution {
+                appId = "1:1089964930381:android:d7a2145c55322688167304"
+                serviceCredentialsFile = "$rootDir/spot-app-co-ace7b02c9d1a.json"
+                artifactType = "APK"
+                artifactPath = "$projectDir/build/outputs/apk/debug/app-debug.apk"
+                groups = "qa"
+            }
         }
     }
 
