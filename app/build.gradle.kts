@@ -11,7 +11,7 @@ plugins {
 android {
 
     signingConfigs {
-        getByName("debug") {
+        getByName("release") {
             storeFile =
                 file(gradleLocalProperties(rootDir).getProperty("storeFilePath"))
             storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
