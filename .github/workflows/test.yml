@@ -32,8 +32,7 @@ jobs:
         FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         SERVICE_CREDENTIALS_JSON: ${{ secrets.SERVICE_CREDENTIALS_JSON }}
       run:
-        chmod +x setup-env.sh
-        ./setup-env.sh
+        chmod +x setup-env.sh | source ./setup-env.sh
 
     - name: Running Check
       run: ./gradlew check -x detekt
