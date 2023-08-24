@@ -10,13 +10,17 @@ plugins {
 
 android {
 
+    val keystoreFilePath: String by rootProject.extra
+    val keystorePassword: String by rootProject.extra
+    val keyAlias: String by rootProject.extra
+    val keyPassword: String by rootProject.extra
+
     signingConfigs {
         create("release") {
-            storeFile =
-                file(gradleLocalProperties(rootDir).getProperty("storeFilePath"))
-            storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
-            keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
-            keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
+            this.storeFile = file(keystoreFilePath)
+            this.storePassword = keystorePassword
+            this.keyAlias = keyAlias
+            this.keyPassword = keyPassword
         }
     }
 

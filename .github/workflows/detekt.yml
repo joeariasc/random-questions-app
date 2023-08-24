@@ -27,6 +27,18 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
 
+    - name: Setup Env
+      env:
+        KEYSTORE_CONTENT: ${{ secrets.KEYSTORE_CONTENT }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+        SERVICE_CREDENTIALS_JSON: ${{ secrets.SERVICE_CREDENTIALS_JSON }}
+      run:
+        chmod +x setup-env.sh
+        ./setup-env.sh
+
     - name: Run Detekt
       run: ./gradlew detektAll
 

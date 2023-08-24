@@ -41,3 +41,22 @@ tasks.register("detektAll", io.gitlab.arturbosch.detekt.Detekt::class) {
     }
 }
 
+val keystoreFilePath: String by extra {
+    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
+        .getProperty("keystoreFilePath") ?: System.getenv("KEYSTORE_PATH")
+}
+
+val keystorePassword: String by extra {
+    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
+        .getProperty("keystorePassword") ?: System.getenv("KEYSTORE_PASSWORD")
+}
+
+val keyAlias: String by extra {
+    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
+        .getProperty("keyAlias") ?: System.getenv("KEY_ALIAS")
+}
+
+val keyPassword: String by extra {
+    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
+        .getProperty("keyPassword") ?: System.getenv("KEY_PASSWORD")
+}

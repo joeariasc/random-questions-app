@@ -11,8 +11,8 @@ Sample app that represents clean architecture and integration with tools.
 Make sure to have these keys on your `local.properties` file:
 
 ```
-storeFilePath=PATH/TO/KEYSTORE
-storePassword=KEYSTORE_PASSWORD
+keystoreFilePath=PATH/TO/KEYSTORE
+keystorePassword=KEYSTORE_PASSWORD
 keyAlias=KEY_ALIAS
 keyPassword=KEY_PASSWORD
 firebaseAppId=APP_ID
