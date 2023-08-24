@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.properties.hasProperty
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id("com.android.application") version "8.1.0" apply false
@@ -41,22 +43,37 @@ tasks.register("detektAll", io.gitlab.arturbosch.detekt.Detekt::class) {
     }
 }
 
-val keystoreFilePath: String by extra {
+private val localProperties =
     com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
-        .getProperty("keystoreFilePath") ?: System.getenv("KEYSTORE_PATH")
+
+val keystoreFilePath: String by extra {
+    if (localProperties.hasProperty("keystoreFilePath")) {
+        localProperties.getProperty("keystoreFilePath")
+    } else {
+        System.getenv("KEYSTORE_PATH")
+    }
 }
 
 val keystorePassword: String by extra {
-    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
-        .getProperty("keystorePassword") ?: System.getenv("KEYSTORE_PASSWORD")
+    if (localProperties.hasProperty("keystorePassword")) {
+        localProperties.getProperty("keystorePassword")
+    } else {
+        System.getenv("KEYSTORE_PASSWORD")
+    }
 }
 
 val keyAlias: String by extra {
-    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
-        .getProperty("keyAlias") ?: System.getenv("KEY_ALIAS")
+    if (localProperties.hasProperty("keyAlias")) {
+        localProperties.getProperty("keyAlias")
+    } else {
+        System.getenv("KEY_ALIAS")
+    }
 }
 
 val keyPassword: String by extra {
-    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
-        .getProperty("keyPassword") ?: System.getenv("KEY_PASSWORD")
+    if (localProperties.hasProperty("keyPassword")) {
+        localProperties.getProperty("keyPassword")
+    } else {
+        System.getenv("KEY_PASSWORD")
+    }
 }
