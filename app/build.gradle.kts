@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,6 +9,16 @@ plugins {
 }
 
 android {
+
+    signingConfigs {
+        getByName("debug") {
+            storeFile =
+                file(gradleLocalProperties(rootDir).getProperty("storeFilePath"))
+            storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
+            keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
+            keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
+        }
+    }
 
     namespace = "com.spotapp.mobile"
     compileSdk = 33
@@ -42,8 +54,8 @@ android {
 
         debug {
             firebaseAppDistribution {
-                appId = "1:1089964930381:android:d7a2145c55322688167304"
-                serviceCredentialsFile = "$rootDir/spot-app-co-ace7b02c9d1a.json"
+                appId = gradleLocalProperties(rootDir).getProperty("firebaseAppId")
+                serviceCredentialsFile = gradleLocalProperties(rootDir).getProperty("serviceCredentialsJsonPath")
                 artifactType = "APK"
                 artifactPath = "$projectDir/build/outputs/apk/debug/app-debug.apk"
                 groups = "qa"

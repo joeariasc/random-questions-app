@@ -43,6 +43,8 @@ android {
 
 dependencies {
 
+    detektPlugins("com.twitter.compose.rules:detekt:0.0.26")
+
     implementation(project(":domain"))
 
     implementation("androidx.activity:activity-compose:1.7.2")
