@@ -77,3 +77,19 @@ val keyPassword: String by extra {
         System.getenv("KEY_PASSWORD")
     }
 }
+
+val firebaseAppId: String by extra {
+    if (localProperties.hasProperty("firebaseAppId")) {
+        localProperties.getProperty("firebaseAppId")
+    } else {
+        System.getenv("FIREBASE_APP_ID")
+    }
+}
+
+val serviceCredentialsFilePath: String by extra {
+    if (localProperties.hasProperty("firebaseAppId")) {
+        localProperties.getProperty("firebaseAppId")
+    } else {
+        System.getenv("SERVICE_CREDENTIALS_PATH")
+    }
+}

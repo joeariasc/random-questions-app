@@ -14,6 +14,8 @@ android {
     val keystorePassword: String by rootProject.extra
     val keyAlias: String by rootProject.extra
     val keyPassword: String by rootProject.extra
+    val firebaseAppId: String by rootProject.extra
+    val serviceCredentialsFilePath: String by rootProject.extra
 
     signingConfigs {
         create("release") {
@@ -58,8 +60,8 @@ android {
 
         debug {
             firebaseAppDistribution {
-                appId = gradleLocalProperties(rootDir).getProperty("firebaseAppId")
-                serviceCredentialsFile = gradleLocalProperties(rootDir).getProperty("serviceCredentialsJsonPath")
+                appId = firebaseAppId
+                serviceCredentialsFile = serviceCredentialsFilePath
                 artifactType = "APK"
                 artifactPath = "$projectDir/build/outputs/apk/debug/app-debug.apk"
                 groups = "qa"
