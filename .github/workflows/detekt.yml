@@ -35,13 +35,11 @@ jobs:
         KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         SERVICE_CREDENTIALS_JSON: ${{ secrets.SERVICE_CREDENTIALS_JSON }}
-        SERVICE_CREDENTIALS_PATH: ${{ "$(pwd)/firebase.json" }}
-        KEYSTORE_PATH: ${{ "$(pwd)/keystore.jks" }}
       run:
         chmod +x setup-env.sh | source ./setup-env.sh
 
     - name: Run Detekt
-      run: ./gradlew detektAll
+      run: echo $KEYSTORE_PASSWORD | ./gradlew detektAll
 
     - name: Upload SARIF to GitHub using the upload-sarif action
       uses: github/codeql-action/upload-sarif@v2
