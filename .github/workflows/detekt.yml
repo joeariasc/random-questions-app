@@ -27,7 +27,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
 
-    - name: Setup Env
+    - name: Run Detekt
       env:
         KEYSTORE_CONTENT: ${{ secrets.KEYSTORE_CONTENT }}
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -38,15 +38,10 @@ jobs:
       run: |
         chmod +x setup-env.sh
         source ./setup-env.sh
-
-    - name: Run Detekt
-      run: |
-        echo ${{ env.KEYSTORE_PASSWORD }}
         ./gradlew detektAll
 
     - name: Upload SARIF to GitHub using the upload-sarif action
       uses: github/codeql-action/upload-sarif@v2
-      if: success() || failure()
       with:
         sarif_file: build/reports/detekt/detekt.sarif
         category: lint
