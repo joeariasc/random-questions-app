@@ -38,6 +38,8 @@ jobs:
       run: |
         chmod +x setup-env.sh
         source ./setup-env.sh
+        export SERVICE_CREDENTIALS_PATH="$(pwd)/firebase.json"
+        export KEYSTORE_PATH="$(pwd)/keystore.jks"
         ./gradlew detektAll
 
     - name: Upload SARIF to GitHub using the upload-sarif action
