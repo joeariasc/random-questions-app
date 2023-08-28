@@ -22,11 +22,10 @@ class AppStateManagerImpl(private val context: Context) : AppStateManager {
 
     override val usersRepository: UsersRepository
         get() = UsersRepositoryImpl(
-            localDatabase.userDao(),
+            localDatabase.userDao()
         )
 
     override suspend fun hasUserSignedOn(): Boolean {
         return localDatabase.userDao().findAll().isNotEmpty()
     }
-
 }

@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 data class UserDto(
     @ColumnInfo("createdAt") var createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo("updatedAt") var updatedAt: Long = System.currentTimeMillis(),
-    @Embedded var userInfo: UserInfoDto? = null,
+    @Embedded var userInfo: UserInfoDto? = null
 ) {
     @ColumnInfo("id")
     @PrimaryKey(autoGenerate = true)
@@ -18,5 +18,5 @@ data class UserDto(
 
 data class UserInfoDto(
     @ColumnInfo(name = "email") var email: String,
-    @ColumnInfo(name = "name") var name: String,
+    @ColumnInfo(name = "name") var name: String
 )

@@ -12,6 +12,5 @@ class UserPreferencesManagerImpl(context: Context) : UserPreferencesManager {
         get() = emptyFlow()
 
     override suspend fun persist(userPreferences: UserPreferences) {
-
     }
 }

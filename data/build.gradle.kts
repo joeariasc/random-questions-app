@@ -5,12 +5,10 @@ plugins {
 }
 
 android {
+
     namespace = "com.spotapp.mobile.data"
-    compileSdk = 33
 
     defaultConfig {
-        minSdk = 30
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -24,27 +22,6 @@ android {
             )
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        jvmToolchain(17)
-    }
-
-    testOptions {
-        unitTests.all {
-            it.jvmArgs("-noverify")
-            it.exclude("android\\.R\\\$styleable", "com\\.android\\.internal\\.R\\\$styleable")
-            kover {
-                excludeSourceSets {
-                    names("android\\.R\\\$styleable", "com\\.android\\.internal\\.R\\\$styleable")
-                }
-            }
-        }
-    }
 }
 
 dependencies {
@@ -55,7 +32,6 @@ dependencies {
 
     annotationProcessor("androidx.room:room-compiler:2.5.2")
     ksp("androidx.room:room-compiler:2.5.2")
-
 }
 
-apply("$rootDir/testing.gradle")
+apply("$rootDir/config.gradle")

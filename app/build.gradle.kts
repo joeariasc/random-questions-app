@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -27,12 +25,10 @@ android {
     }
 
     namespace = "com.spotapp.mobile"
-    compileSdk = 33
 
     defaultConfig {
 
         applicationId = "com.spotapp.mobile"
-        minSdk = 30
         versionCode = 1
         versionName = "1.0"
 
@@ -69,15 +65,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        jvmToolchain(17)
-    }
-
     buildFeatures {
         compose = true
     }
@@ -111,7 +98,7 @@ android {
 
             mergeWith("debug")
 
-            filters { // common filters for all default Kover tasks
+            filters {
                 excludes {
                     classes(
                         "*_Impl*",
@@ -134,7 +121,6 @@ android {
             }
         }
     }
-
 }
 
 dependencies {
@@ -152,7 +138,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("com.google.firebase:firebase-crashlytics:18.4.0")
     implementation("com.google.firebase:firebase-analytics:21.3.0")
-
 }
 
-apply("$rootDir/testing.gradle")
+apply("$rootDir/config.gradle")

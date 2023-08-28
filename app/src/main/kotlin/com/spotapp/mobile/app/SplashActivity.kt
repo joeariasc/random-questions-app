@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 class SplashActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen().setKeepOnScreenCondition { true }
         }
@@ -22,13 +21,16 @@ class SplashActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                delay(800L)
+                delay(SPLASH_SCREEN_VISIBILITY_DELAY)
             }
 
             startActivity(Intent(this@SplashActivity, MainActivity::class.java))
             finishAffinity()
         }
+    }
+
+    companion object {
+        private const val SPLASH_SCREEN_VISIBILITY_DELAY = 800L
     }
 }

@@ -6,11 +6,10 @@ data class ViewModelState(
     val isAuthenticated: Boolean = false,
     val signInType: SignInType? = null,
     val name: String? = null,
-    val email: String? = null,
+    val email: String? = null
 ) {
 
     fun toUiState(): UiState {
-
         if (isLoading) {
             return UiState.Loading
         }
@@ -23,7 +22,7 @@ data class ViewModelState(
             SignInType.ANONYMOUS ->
                 UiState.Anonymous(
                     isAuthenticated = isAuthenticated,
-                    errorMessage = errorMessage,
+                    errorMessage = errorMessage
                 )
 
             SignInType.EMAIL ->
@@ -31,10 +30,9 @@ data class ViewModelState(
                     isAuthenticated = isAuthenticated,
                     errorMessage = errorMessage,
                     name = name,
-                    email = email,
+                    email = email
                 )
         }
-
     }
 
     enum class SignInType {

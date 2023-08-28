@@ -15,5 +15,4 @@ interface UserDao {
     @Query("SELECT * FROM users")
     @Throws(SQLiteException::class)
     suspend fun findAll(): List<UserDto>
-
 }

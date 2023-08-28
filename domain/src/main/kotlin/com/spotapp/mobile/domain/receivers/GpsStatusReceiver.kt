@@ -7,7 +7,5 @@ import android.content.Intent
 class GpsStatusReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-
     }
-
 }

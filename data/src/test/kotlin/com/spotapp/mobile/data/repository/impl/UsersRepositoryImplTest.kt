@@ -23,7 +23,6 @@ class UsersRepositoryImplTest {
 
     @Test
     fun newAnonymousUserWithNoError() {
-
         coJustRun { userDao.save(any()) }
 
         val repositoryImpl = UsersRepositoryImpl(userDao)
@@ -35,7 +34,6 @@ class UsersRepositoryImplTest {
 
     @Test
     fun newAnonymousUserWithError() {
-
         val sqliteException = SQLiteException("an SQLite exception was thrown")
         coEvery { userDao.save(any()) } throws sqliteException
 
@@ -51,7 +49,6 @@ class UsersRepositoryImplTest {
 
     @Test
     fun newUserWithEmailAndNameWithNoError() {
-
         coJustRun { userDao.save(any()) }
 
         val repositoryImpl = UsersRepositoryImpl(userDao)
@@ -63,7 +60,6 @@ class UsersRepositoryImplTest {
 
     @Test
     fun newUserWithEmailAndNameWithError() {
-
         val sqliteException = SQLiteException("an SQLite exception was thrown")
         coEvery { userDao.save(any()) } throws sqliteException
 
@@ -75,6 +71,5 @@ class UsersRepositoryImplTest {
                 assertEquals(sqliteException, (result as Result.Error).exception)
             }
         }
-
     }
 }

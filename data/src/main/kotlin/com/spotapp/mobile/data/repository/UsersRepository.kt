@@ -11,5 +11,4 @@ interface UsersRepository {
         name: String,
         email: String
     ): Result<UserDto>
-
 }

@@ -16,14 +16,12 @@ import com.spotapp.mobile.ui.feature.home.HomeScreen
 fun NavGraph(
     startDestination: String,
     navController: NavHostController,
-    appStateManager: AppStateManager,
+    appStateManager: AppStateManager
 ) {
-
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = startDestination
     ) {
-
         composable(route = Destinations.home()) {
             HomeScreen(
                 viewModel = viewModel()
@@ -31,16 +29,19 @@ fun NavGraph(
         }
 
         composable(route = Destinations.auth()) {
-            AuthScreen(viewModel = viewModel(
-                factory = AuthViewModel.factory(
-                    authenticateNewAnonymousUser = AuthenticateNewAnonymousUser(usersRepository = appStateManager.usersRepository),
-                    authenticateNewUserWithEmail = AuthenticateNewUserWithEmail(usersRepository = appStateManager.usersRepository),
-                )
-            ), navigateToHome = {
-                navController.navigate(Destinations.home()) {
-                    popUpTo(0)
+            AuthScreen(
+                viewModel = viewModel(
+                    factory = AuthViewModel.factory(
+                        authenticateNewAnonymousUser = AuthenticateNewAnonymousUser(usersRepository = appStateManager.usersRepository),
+                        authenticateNewUserWithEmail = AuthenticateNewUserWithEmail(usersRepository = appStateManager.usersRepository)
+                    )
+                ),
+                navigateToHome = {
+                    navController.navigate(Destinations.home()) {
+                        popUpTo(0)
+                    }
                 }
-            })
+            )
         }
     }
 }

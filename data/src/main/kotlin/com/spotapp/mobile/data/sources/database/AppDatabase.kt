@@ -14,7 +14,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         fun get(context: Context) = Room.databaseBuilder(
-            context, AppDatabase::class.java, "spotapp.db"
+            context,
+            AppDatabase::class.java,
+            "spotapp.db"
         ).build()
     }
 }

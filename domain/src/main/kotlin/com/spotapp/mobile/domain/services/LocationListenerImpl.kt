@@ -6,6 +6,5 @@ import android.location.LocationListener
 class LocationListenerImpl : LocationListener {
 
     override fun onLocationChanged(location: Location) {
-
     }
 }

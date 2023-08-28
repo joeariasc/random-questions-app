@@ -5,11 +5,8 @@ plugins {
 
 android {
     namespace = "com.spotapp.mobile.domain"
-    compileSdk = 33
 
     defaultConfig {
-        minSdk = 30
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -23,15 +20,6 @@ android {
             )
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        jvmToolchain(17)
-    }
 }
 
 dependencies {
@@ -43,4 +31,4 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
 }
 
-apply("$rootDir/testing.gradle")
+apply("$rootDir/config.gradle")

@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AuthScreen(viewModel: AuthViewModel, navigateToHome: () -> Unit) {
-
     val uiState by viewModel.uiState.collectAsState()
 
     if (uiState.isAuthenticated) {
@@ -34,7 +33,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigateToHome: () -> Unit) {
         onUsingNameAndEmailSignInClick = viewModel::onUsingNameAndEmailSignInClick,
         onNameChange = viewModel::onNameChange,
         onEmailChange = viewModel::onEmailChange,
-        onSignInWithNameAndEmailClick = viewModel::onSignInWithNameAndEmailClick,
+        onSignInWithNameAndEmailClick = viewModel::onSignInWithNameAndEmailClick
     )
 }
 
@@ -45,16 +44,15 @@ private fun Auth(
     onUsingNameAndEmailSignInClick: () -> Unit = {},
     onNameChange: (String) -> Unit = {},
     onEmailChange: (String) -> Unit = {},
-    onSignInWithNameAndEmailClick: () -> Unit = {},
+    onSignInWithNameAndEmailClick: () -> Unit = {}
 ) {
     Column(
         Modifier
             .fillMaxSize()
             .padding(10.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(modifier = Modifier.padding(vertical = 10.dp), text = "Sign-In to Spot")
 
         when (state) {
@@ -64,12 +62,11 @@ private fun Auth(
                 state,
                 onNameChange,
                 onEmailChange,
-                onSignInWithNameAndEmailClick,
+                onSignInWithNameAndEmailClick
             )
 
             is UiState.Loading -> LoadingAuth()
         }
-
     }
 }
 
@@ -78,24 +75,26 @@ private fun NameAndEmailAuth(
     uiState: UiState.WithNameAndEmail,
     onNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
-    onSignInClick: () -> Unit,
+    onSignInClick: () -> Unit
 ) {
-    OutlinedTextField(
-        value = uiState.name ?: "",
-        placeholder = {
-            Text(text = "Full Name")
-        },
-        onValueChange = onNameChange,
-    )
-    OutlinedTextField(
-        value = uiState.email ?: "",
-        placeholder = {
-            Text(text = "Email")
-        },
-        onValueChange = onEmailChange,
-    )
-    Button(onClick = onSignInClick) {
-        Text(text = "Sign-In Now")
+    Column {
+        OutlinedTextField(
+            value = uiState.name ?: "",
+            placeholder = {
+                Text(text = "Full Name")
+            },
+            onValueChange = onNameChange
+        )
+        OutlinedTextField(
+            value = uiState.email ?: "",
+            placeholder = {
+                Text(text = "Email")
+            },
+            onValueChange = onEmailChange
+        )
+        Button(onClick = onSignInClick) {
+            Text(text = "Sign-In Now")
+        }
     }
 }
 
@@ -103,7 +102,6 @@ private fun NameAndEmailAuth(
 private fun AnonymousAuth() {
     Text(text = "Signed-In Anonymously")
 }
-
 
 @Composable
 private fun LoadingAuth() {
@@ -113,13 +111,15 @@ private fun LoadingAuth() {
 @Composable
 private fun IdleAuth(
     onAnonymousSignInClick: () -> Unit,
-    onUsingNameAndEmailSignInClick: () -> Unit,
+    onUsingNameAndEmailSignInClick: () -> Unit
 ) {
-    Button(onClick = onAnonymousSignInClick) {
-        Text(text = "Anonymously")
-    }
-    Button(onClick = onUsingNameAndEmailSignInClick) {
-        Text(text = "Using name and email")
+    Column {
+        Button(onClick = onAnonymousSignInClick) {
+            Text(text = "Anonymously")
+        }
+        Button(onClick = onUsingNameAndEmailSignInClick) {
+            Text(text = "Using name and email")
+        }
     }
 }
 
@@ -137,7 +137,7 @@ fun AuthNameAndEmailPreview() {
     Auth(
         state = UiState.WithNameAndEmail(
             email = null,
-            name = null,
+            name = null
         )
     )
 }

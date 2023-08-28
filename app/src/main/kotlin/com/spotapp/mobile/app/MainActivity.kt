@@ -19,7 +19,6 @@ class MainActivity : ComponentActivity() {
         application = applicationContext as SpotApplication
 
         lifecycleScope.launch {
-
             val startDestination =
                 Destinations.startDestination(application.appStateManager)
 
@@ -28,12 +27,10 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         startDestination = startDestination,
                         navController = rememberNavController(),
-                        appStateManager = application.appStateManager,
+                        appStateManager = application.appStateManager
                     )
                 }
             }
         }
-
     }
-
 }

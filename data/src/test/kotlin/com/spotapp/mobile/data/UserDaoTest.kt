@@ -40,7 +40,6 @@ class UserDaoTest {
     @Test
     @Throws(Exception::class)
     fun writeUserAndReadInList() {
-
         val user = UserDto(
             userInfo = UserInfoDto(
                 email = "some@email.com",
@@ -54,7 +53,6 @@ class UserDaoTest {
             val allUsers = userDao.findAll()
             assertTrue(allUsers.isNotEmpty())
             assertEquals(user, allUsers[0])
-
         }
     }
 }

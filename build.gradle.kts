@@ -11,12 +11,14 @@ plugins {
     id("com.google.gms.google-services") version "4.3.15" apply false
     id("com.google.firebase.crashlytics") version "2.9.8" apply false
     id("com.google.firebase.appdistribution") version "4.0.0" apply false
+    id("org.jlleitschuh.gradle.ktlint") version "11.5.1" apply false
 }
 
 allprojects {
     apply {
         plugin("org.jetbrains.kotlinx.kover")
         plugin("io.gitlab.arturbosch.detekt")
+        plugin("org.jlleitschuh.gradle.ktlint")
     }
 }
 
@@ -26,9 +28,10 @@ val resourceFiles = "**/resources/**"
 val buildFiles = "**/build/**"
 
 tasks.register("detektAll", io.gitlab.arturbosch.detekt.Detekt::class) {
+    config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
     basePath = projectSource.path
     description = "Custom DETEKT build for all modules"
-    parallel = true
+    parallel = false
     ignoreFailures = true
     autoCorrect = false
     buildUponDefaultConfig = true

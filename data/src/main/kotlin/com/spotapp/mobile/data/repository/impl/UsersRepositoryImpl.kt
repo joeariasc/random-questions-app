@@ -29,8 +29,9 @@ class UsersRepositoryImpl(private val userDao: UserDao) : UsersRepository {
                 Result.Success(
                     UserDto(
                         userInfo = UserInfoDto(
-                            name = name, email = email,
-                        ),
+                            name = name,
+                            email = email
+                        )
                     ).also {
                         userDao.save(it)
                     }
@@ -39,5 +40,4 @@ class UsersRepositoryImpl(private val userDao: UserDao) : UsersRepository {
                 Result.Error(e)
             }
         }
-
 }

@@ -4,12 +4,9 @@ plugins {
 }
 
 android {
-    namespace = "com.spotapp.mobile.presentation"
-    compileSdk = 33
+    namespace = "com.spotapp.mobile.ui"
 
     defaultConfig {
-        minSdk = 30
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -23,10 +20,6 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
 
     buildFeatures {
         compose = true
@@ -35,15 +28,21 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
-    
-    kotlin {
-        jvmToolchain(17)
+
+    testOptions {
+        unitTests.all {
+            it.jvmArgs("-noverify")
+            it.exclude("android\\.R\\\$styleable", "com\\.android\\.internal\\.R\\\$styleable")
+            kover {
+                excludeSourceSets {
+                    names("android\\.R\\\$styleable", "com\\.android\\.internal\\.R\\\$styleable")
+                }
+            }
+        }
     }
 }
 
 dependencies {
-
-    detektPlugins("com.twitter.compose.rules:detekt:0.0.26")
 
     implementation(project(":domain"))
 
@@ -62,7 +61,6 @@ dependencies {
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
-
 }
 
-apply("$rootDir/testing.gradle")
+apply("$rootDir/config.gradle")

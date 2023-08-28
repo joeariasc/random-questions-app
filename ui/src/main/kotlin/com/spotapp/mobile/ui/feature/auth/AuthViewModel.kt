@@ -16,13 +16,15 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authenticateNewAnonymousUser: AuthenticateNewAnonymousUser,
-    private val authenticateNewUserWithEmail: AuthenticateNewUserWithEmail,
+    private val authenticateNewUserWithEmail: AuthenticateNewUserWithEmail
 ) : ViewModel() {
 
     private val viewModelState: MutableStateFlow<ViewModelState> =
         MutableStateFlow(ViewModelState())
     val uiState = viewModelState.map(ViewModelState::toUiState).stateIn(
-        viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState()
+        viewModelScope,
+        SharingStarted.Eagerly,
+        viewModelState.value.toUiState()
     )
 
     fun onAnonymousSignInClick() {
@@ -60,7 +62,7 @@ class AuthViewModel(
         if (name.isNullOrBlank() || email.isNullOrBlank()) {
             viewModelState.update {
                 it.copy(
-                    errorMessage = "Name or email invalid",
+                    errorMessage = "Name or email invalid"
                 )
             }
             return
@@ -74,7 +76,6 @@ class AuthViewModel(
     private fun authenticateNewUser(authenticate: suspend () -> Result<User>) =
         viewModelScope.launch {
             when (authenticate()) {
-
                 is Result.Loading -> {
                     viewModelState.update {
                         it.copy(
@@ -87,7 +88,7 @@ class AuthViewModel(
                     viewModelState.update {
                         it.copy(
                             errorMessage = it.errorMessage,
-                            isLoading = false,
+                            isLoading = false
                         )
                     }
                 }
@@ -97,7 +98,7 @@ class AuthViewModel(
                         it.copy(
                             isAuthenticated = true,
                             errorMessage = null,
-                            isLoading = false,
+                            isLoading = false
                         )
                     }
                 }
@@ -109,15 +110,14 @@ class AuthViewModel(
         @Suppress("UNCHECKED_CAST")
         fun factory(
             authenticateNewAnonymousUser: AuthenticateNewAnonymousUser,
-            authenticateNewUserWithEmail: AuthenticateNewUserWithEmail,
+            authenticateNewUserWithEmail: AuthenticateNewUserWithEmail
         ): ViewModelProvider.Factory = object : ViewModelProvider.NewInstanceFactory() {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return AuthViewModel(
                     authenticateNewAnonymousUser = authenticateNewAnonymousUser,
-                    authenticateNewUserWithEmail = authenticateNewUserWithEmail,
+                    authenticateNewUserWithEmail = authenticateNewUserWithEmail
                 ) as T
             }
         }
     }
-
 }

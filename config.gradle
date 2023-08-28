@@ -1,0 +1,40 @@
+android {
+
+    compileSdk = 33
+
+    defaultConfig {
+        minSdk = 30
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlin {
+        jvmToolchain(17)
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs("src/main/kotlin")
+        }
+        test {
+            java.srcDirs("src/test/kotlin")
+        }
+        androidTest {
+            java.srcDirs("src/androidTest/kotlin")
+        }
+    }
+}
+
+dependencies {
+
+    ktlintRuleset("com.twitter.compose.rules:ktlint:0.0.26")
+
+    testImplementation("io.mockk:mockk-android:1.13.5")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.robolectric:robolectric:4.10.3")
+}
