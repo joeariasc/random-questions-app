@@ -1,9 +1,9 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.google.firebase.appdistribution")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.kotlin)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.google.firebase.appdistribution)
 }
 
 android {
@@ -133,11 +133,11 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":ui"))
 
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.navigation:navigation-compose:2.6.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("com.google.firebase:firebase-crashlytics:18.4.0")
-    implementation("com.google.firebase:firebase-analytics:21.3.0")
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 }
 
 apply("$rootDir/config.gradle")

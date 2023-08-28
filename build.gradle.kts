@@ -1,24 +1,23 @@
 import org.jetbrains.kotlin.konan.properties.hasProperty
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id("com.android.application") version "8.1.0" apply false
-    id("com.android.library") version "8.1.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.9.0" apply false
-    id("com.google.devtools.ksp") version "1.9.0-1.0.13" apply false
-    id("org.jetbrains.kotlinx.kover") version "0.7.3" apply false
-    id("io.gitlab.arturbosch.detekt") version ("1.23.1") apply false
-    id("com.google.gms.google-services") version "4.3.15" apply false
-    id("com.google.firebase.crashlytics") version "2.9.8" apply false
-    id("com.google.firebase.appdistribution") version "4.0.0" apply false
-    id("org.jlleitschuh.gradle.ktlint") version "11.5.1" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.kotlin) apply false
+    alias(libs.plugins.google.ksp) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.google.firebase.crashlytics) apply false
+    alias(libs.plugins.google.firebase.appdistribution) apply false
+    alias(libs.plugins.kotlinx.kover) apply false
+    alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.ktlint) apply false
 }
 
 allprojects {
     apply {
-        plugin("org.jetbrains.kotlinx.kover")
-        plugin("io.gitlab.arturbosch.detekt")
-        plugin("org.jlleitschuh.gradle.ktlint")
+        plugin(rootProject.libs.plugins.kotlinx.kover.get().pluginId)
+        plugin(rootProject.libs.plugins.detekt.get().pluginId)
+        plugin(rootProject.libs.plugins.ktlint.get().pluginId)
     }
 }
 

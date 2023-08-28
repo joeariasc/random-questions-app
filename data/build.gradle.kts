@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin)
+    alias(libs.plugins.google.ksp)
 }
 
 android {
@@ -26,12 +26,12 @@ android {
 
 dependencies {
 
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    api("androidx.room:room-runtime:2.5.2")
-    api("androidx.room:room-ktx:2.5.2")
+    api(libs.kotlinx.coroutines.core)
+    api(libs.androidx.room.runtime)
+    api(libs.androidx.room.ktx)
 
-    annotationProcessor("androidx.room:room-compiler:2.5.2")
-    ksp("androidx.room:room-compiler:2.5.2")
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.room.compiler)
 }
 
 apply("$rootDir/config.gradle")
