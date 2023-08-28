@@ -19,10 +19,12 @@ android {
             val keyAlias: String by rootProject.extra
             val keyPassword: String by rootProject.extra
 
-            this.storeFile = file(keystoreFilePath)
-            this.storePassword = keystorePassword
-            this.keyAlias = keyAlias
-            this.keyPassword = keyPassword
+            if (keystoreFilePath.isNotBlank()) {
+                this.storeFile = file(keystoreFilePath)
+                this.storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
         }
     }
 

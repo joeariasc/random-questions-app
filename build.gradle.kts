@@ -63,6 +63,6 @@ fun getPropertyOrEnvVar(localProperty: String, environmentVariable: String) = ex
     if (localProperties.hasProperty(localProperty)) {
         localProperties.getProperty(localProperty)
     } else {
-        System.getenv(environmentVariable)
+        System.getenv(environmentVariable) ?: ""
     }
 }
