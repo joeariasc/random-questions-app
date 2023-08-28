@@ -8,15 +8,17 @@ plugins {
 
 android {
 
-    val keystoreFilePath: String by rootProject.extra
-    val keystorePassword: String by rootProject.extra
-    val keyAlias: String by rootProject.extra
-    val keyPassword: String by rootProject.extra
-    val firebaseAppId: String by rootProject.extra
-    val serviceCredentialsFilePath: String by rootProject.extra
+    val appVersionName: String by rootProject.extra
+    val appVersionCode: String by rootProject.extra
 
     signingConfigs {
         create("release") {
+
+            val keystoreFilePath: String by rootProject.extra
+            val keystorePassword: String by rootProject.extra
+            val keyAlias: String by rootProject.extra
+            val keyPassword: String by rootProject.extra
+
             this.storeFile = file(keystoreFilePath)
             this.storePassword = keystorePassword
             this.keyAlias = keyAlias
@@ -29,8 +31,8 @@ android {
     defaultConfig {
 
         applicationId = "com.spotapp.mobile"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode.toInt()
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -47,14 +49,16 @@ android {
 
     buildTypes {
         release {
+
+            val firebaseAppId: String by rootProject.extra
+            val serviceCredentialsFilePath: String by rootProject.extra
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
 
-        debug {
             firebaseAppDistribution {
                 appId = firebaseAppId
                 serviceCredentialsFile = serviceCredentialsFilePath

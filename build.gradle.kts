@@ -45,53 +45,24 @@ tasks.register("detektAll", io.gitlab.arturbosch.detekt.Detekt::class) {
     }
 }
 
-private val localProperties =
-    com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
+val keystoreFilePath: String by getPropertyOrEnvVar("keystoreFilePath", "KEYSTORE_PATH")
+val keystorePassword: String by getPropertyOrEnvVar("keystorePassword", "KEYSTORE_PASSWORD")
+val keyAlias: String by getPropertyOrEnvVar("keyAlias", "KEY_ALIAS")
+val keyPassword: String by getPropertyOrEnvVar("keyPassword", "KEY_PASSWORD")
+val firebaseAppId: String by getPropertyOrEnvVar("firebaseAppId", "FIREBASE_APP_ID")
+val serviceCredentialsFilePath: String by getPropertyOrEnvVar(
+    "firebaseAppId",
+    "SERVICE_CREDENTIALS_PATH"
+)
+val appVersionName: String by getPropertyOrEnvVar("appVersionName", "APP_VERSION_NAME")
+val appVersionCode: String by getPropertyOrEnvVar("appVersionCode", "APP_VERSION_CODE")
 
-val keystoreFilePath: String by extra {
-    if (localProperties.hasProperty("keystoreFilePath")) {
-        localProperties.getProperty("keystoreFilePath")
+fun getPropertyOrEnvVar(localProperty: String, environmentVariable: String) = extra {
+    val localProperties =
+        com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
+    if (localProperties.hasProperty(localProperty)) {
+        localProperties.getProperty(localProperty)
     } else {
-        System.getenv("KEYSTORE_PATH")
-    }
-}
-
-val keystorePassword: String by extra {
-    if (localProperties.hasProperty("keystorePassword")) {
-        localProperties.getProperty("keystorePassword")
-    } else {
-        System.getenv("KEYSTORE_PASSWORD")
-    }
-}
-
-val keyAlias: String by extra {
-    if (localProperties.hasProperty("keyAlias")) {
-        localProperties.getProperty("keyAlias")
-    } else {
-        System.getenv("KEY_ALIAS")
-    }
-}
-
-val keyPassword: String by extra {
-    if (localProperties.hasProperty("keyPassword")) {
-        localProperties.getProperty("keyPassword")
-    } else {
-        System.getenv("KEY_PASSWORD")
-    }
-}
-
-val firebaseAppId: String by extra {
-    if (localProperties.hasProperty("firebaseAppId")) {
-        localProperties.getProperty("firebaseAppId")
-    } else {
-        System.getenv("FIREBASE_APP_ID")
-    }
-}
-
-val serviceCredentialsFilePath: String by extra {
-    if (localProperties.hasProperty("firebaseAppId")) {
-        localProperties.getProperty("firebaseAppId")
-    } else {
-        System.getenv("SERVICE_CREDENTIALS_PATH")
+        System.getenv(environmentVariable)
     }
 }
