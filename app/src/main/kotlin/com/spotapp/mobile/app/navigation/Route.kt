@@ -1,6 +1,6 @@
 package com.spotapp.mobile.app.navigation
 
-import com.spotapp.mobile.app.di.AppStateManager
+import com.spotapp.mobile.app.state.AppStateManager
 
 typealias Route = String
 

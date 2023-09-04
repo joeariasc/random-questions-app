@@ -4,11 +4,11 @@ import com.spotapp.mobile.data.repository.UsersRepository
 import com.spotapp.mobile.domain.model.Result
 import com.spotapp.mobile.domain.model.asDomain
 import com.spotapp.mobile.domain.model.user.User
+import javax.inject.Inject
 
-class AuthenticateNewUserWithEmail(private val usersRepository: UsersRepository) {
+class AuthenticateNewUserWithEmail @Inject constructor(private val usersRepository: UsersRepository) {
 
     suspend operator fun invoke(
-        name: String,
-        email: String
+        name: String, email: String
     ): Result<User> = usersRepository.newUserWith(name, email).asDomain()
 }

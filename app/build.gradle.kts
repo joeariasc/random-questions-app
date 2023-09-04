@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
     alias(libs.plugins.google.firebase.appdistribution)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -76,7 +77,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     packaging {
@@ -126,6 +127,10 @@ android {
                 onCheck = true
             }
         }
+    }
+
+    kapt {
+        correctErrorTypes = true
     }
 }
 

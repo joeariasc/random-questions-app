@@ -1,20 +1,22 @@
 package com.spotapp.mobile.ui.feature.auth
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.spotapp.mobile.domain.model.Result
 import com.spotapp.mobile.domain.model.user.User
 import com.spotapp.mobile.domain.usecases.AuthenticateNewAnonymousUser
 import com.spotapp.mobile.domain.usecases.AuthenticateNewUserWithEmail
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AuthViewModel(
+@HiltViewModel
+class AuthViewModel @Inject constructor(
     private val authenticateNewAnonymousUser: AuthenticateNewAnonymousUser,
     private val authenticateNewUserWithEmail: AuthenticateNewUserWithEmail
 ) : ViewModel() {
@@ -104,20 +106,4 @@ class AuthViewModel(
                 }
             }
         }
-
-    companion object {
-
-        @Suppress("UNCHECKED_CAST")
-        fun factory(
-            authenticateNewAnonymousUser: AuthenticateNewAnonymousUser,
-            authenticateNewUserWithEmail: AuthenticateNewUserWithEmail
-        ): ViewModelProvider.Factory = object : ViewModelProvider.NewInstanceFactory() {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AuthViewModel(
-                    authenticateNewAnonymousUser = authenticateNewAnonymousUser,
-                    authenticateNewUserWithEmail = authenticateNewUserWithEmail
-                ) as T
-            }
-        }
-    }
 }

@@ -2,6 +2,7 @@ package com.spotapp.mobile.data.repository.impl
 
 import android.database.sqlite.SQLiteException
 import com.spotapp.mobile.data.Result
+import com.spotapp.mobile.data.repository.UsersRepository
 import com.spotapp.mobile.data.sources.database.users.UserDao
 import io.mockk.coEvery
 import io.mockk.coJustRun
@@ -12,7 +13,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class UsersRepositoryImplTest {
+class UsersRepositoryTest {
 
     private lateinit var userDao: UserDao
 
@@ -25,10 +26,10 @@ class UsersRepositoryImplTest {
     fun newAnonymousUserWithNoError() {
         coJustRun { userDao.save(any()) }
 
-        val repositoryImpl = UsersRepositoryImpl(userDao)
+        val usersRepository = UsersRepository(userDao)
 
         runTest {
-            assertTrue(repositoryImpl.newAnonymousUser() is Result.Success)
+            assertTrue(usersRepository.newAnonymousUser() is Result.Success)
         }
     }
 
@@ -37,10 +38,10 @@ class UsersRepositoryImplTest {
         val sqliteException = SQLiteException("an SQLite exception was thrown")
         coEvery { userDao.save(any()) } throws sqliteException
 
-        val repositoryImpl = UsersRepositoryImpl(userDao)
+        val usersRepository = UsersRepository(userDao)
 
         runTest {
-            repositoryImpl.newAnonymousUser().let { result ->
+            usersRepository.newAnonymousUser().let { result ->
                 assertTrue(result is Result.Error)
                 assertEquals(sqliteException, (result as Result.Error).exception)
             }
@@ -51,10 +52,10 @@ class UsersRepositoryImplTest {
     fun newUserWithEmailAndNameWithNoError() {
         coJustRun { userDao.save(any()) }
 
-        val repositoryImpl = UsersRepositoryImpl(userDao)
+        val usersRepository = UsersRepository(userDao)
 
         runTest {
-            assertTrue(repositoryImpl.newUserWith("Test", "test@spotapp.com") is Result.Success)
+            assertTrue(usersRepository.newUserWith("Test", "test@spotapp.com") is Result.Success)
         }
     }
 
@@ -63,10 +64,10 @@ class UsersRepositoryImplTest {
         val sqliteException = SQLiteException("an SQLite exception was thrown")
         coEvery { userDao.save(any()) } throws sqliteException
 
-        val repositoryImpl = UsersRepositoryImpl(userDao)
+        val usersRepository = UsersRepository(userDao)
 
         runTest {
-            repositoryImpl.newUserWith("Test", "test@spotapp.com").let { result ->
+            usersRepository.newUserWith("Test", "test@spotapp.com").let { result ->
                 assertTrue(result is Result.Error)
                 assertEquals(sqliteException, (result as Result.Error).exception)
             }

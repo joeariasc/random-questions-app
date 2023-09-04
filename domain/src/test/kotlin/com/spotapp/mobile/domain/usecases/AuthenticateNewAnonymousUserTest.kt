@@ -15,9 +15,9 @@ class AuthenticateNewAnonymousUserTest {
     fun testAuthenticateNewAnonymousUserSuccess() = runTest {
         val usersRepository = mockk<UsersRepository>()
         coEvery { usersRepository.newAnonymousUser() } returns
-            com.spotapp.mobile.data.Result.Success(
-                UserDto()
-            )
+                com.spotapp.mobile.data.Result.Success(
+                    UserDto()
+                )
 
         val useCase = AuthenticateNewAnonymousUser(usersRepository)
 
@@ -30,9 +30,9 @@ class AuthenticateNewAnonymousUserTest {
     fun testAuthenticateNewAnonymousUserFailed() = runTest {
         val usersRepository = mockk<UsersRepository>()
         coEvery { usersRepository.newAnonymousUser() } returns
-            com.spotapp.mobile.data.Result.Error(
-                Exception("something went wrong")
-            )
+                com.spotapp.mobile.data.Result.Error(
+                    Exception("something went wrong")
+                )
 
         val useCase = AuthenticateNewAnonymousUser(usersRepository)
 

@@ -37,7 +37,7 @@ dependencyResolutionManagement {
             version("roomKtx", "2.5.2")
             version("roomRuntime", "2.5.2")
             version("ui", "1.5.0")
-            version("androidKotlin", "1.9.0")
+            version("androidKotlin", "1.9.10")
             version("googleKsp", "1.9.0-1.0.13")
             version("kotlinxKover", "0.7.3")
             version("detekt", "1.23.1")
@@ -45,6 +45,8 @@ dependencyResolutionManagement {
             version("firebaseCrashlyticsPlugin", "2.9.9")
             version("firebaseAppdistribution", "4.0.0")
             version("ktlint", "11.5.1")
+            version("hilt", "2.48")
+            version("kapt", "1.9.10")
 
             library(
                 "androidx-activity-compose",
@@ -132,6 +134,12 @@ dependencyResolutionManagement {
             library("material", "com.google.android.material", "material").versionRef("material")
             library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")
             library("mockk-android", "io.mockk", "mockk-android").versionRef("mockkAndroid")
+            library("hilt-android", "com.google.dagger", "hilt-android").versionRef("hilt")
+            library(
+                "hilt-compiler",
+                "com.google.dagger",
+                "hilt-android-compiler"
+            ).versionRef("hilt")
 
             plugin(
                 "android-application",
@@ -152,6 +160,8 @@ dependencyResolutionManagement {
                 "com.google.firebase.appdistribution"
             ).versionRef("firebaseAppdistribution")
             plugin("ktlint", "org.jlleitschuh.gradle.ktlint").versionRef("ktlint")
+            plugin("hilt", "com.google.dagger.hilt.android").versionRef("hilt")
+            plugin("kapt", "org.jetbrains.kotlin.kapt").versionRef("kapt")
         }
     }
 }
