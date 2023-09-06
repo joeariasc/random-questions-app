@@ -1,4 +1,4 @@
-# spot-app
+# Sample App with Clean Architecture 
 
 ![Detekt](https://github.com/efrenospino/spot-app/actions/workflows/detekt.yml/badge.svg)
 ![Unit Tests](https://github.com/efrenospino/spot-app/actions/workflows/test.yml/badge.svg)
