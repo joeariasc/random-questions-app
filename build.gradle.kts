@@ -55,15 +55,16 @@ val serviceCredentialsFilePath: String by getPropertyOrEnvVar(
     "firebaseAppId",
     "SERVICE_CREDENTIALS_PATH"
 )
-val appVersionName: String by getPropertyOrEnvVar("appVersionName", "APP_VERSION_NAME")
-val appVersionCode: String by getPropertyOrEnvVar("appVersionCode", "APP_VERSION_CODE")
+val appVersionName: String by getPropertyOrEnvVar("appVersionName", "APP_VERSION_NAME", "SNAPSHOT")
+val appVersionCode: String by getPropertyOrEnvVar("appVersionCode", "APP_VERSION_CODE", "1")
 
-fun getPropertyOrEnvVar(localProperty: String, environmentVariable: String) = extra {
-    val localProperties =
-        com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
-    if (localProperties.hasProperty(localProperty)) {
-        localProperties.getProperty(localProperty)
-    } else {
-        System.getenv(environmentVariable) ?: ""
+fun getPropertyOrEnvVar(localProperty: String, environmentVariable: String, default: String = "") =
+    extra {
+        val localProperties =
+            com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)
+        if (localProperties.hasProperty(localProperty)) {
+            localProperties.getProperty(localProperty)
+        } else {
+            System.getenv(environmentVariable) ?: default
+        }
     }
-}
