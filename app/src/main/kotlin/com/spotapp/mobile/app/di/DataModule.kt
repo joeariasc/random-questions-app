@@ -1,32 +1,22 @@
 package com.spotapp.mobile.app.di
 
-import android.content.Context
 import com.spotapp.mobile.data.repository.UsersRepository
 import com.spotapp.mobile.data.sources.database.AppDatabase
 import com.spotapp.mobile.data.sources.preferences.UserPreferencesManager
 import com.spotapp.mobile.data.sources.preferences.impl.UserPreferencesManagerImpl
 import com.spotapp.mobile.data.sources.remote.RestClient
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 
-@Module
-@InstallIn(SingletonComponent::class)
-class DataModule {
+class DataModule(private val systemModule: SystemModule) {
 
-    @Provides
-    fun provideAppDatabase(context: Context): AppDatabase = AppDatabase.get(context)
+    val appDatabase: AppDatabase
+        get() = AppDatabase.get(systemModule.applicationContext)
 
-    @Provides
-    fun provideRestClient(): RestClient = RestClient()
+    val restClient: RestClient
+        get() = RestClient()
 
-    @Provides
-    fun provideUserPreferencesManager(context: Context): UserPreferencesManager =
-        UserPreferencesManagerImpl(context)
+    val userPreferencesManager: UserPreferencesManager
+        get() = UserPreferencesManagerImpl(systemModule.applicationContext)
 
-    @Provides
-    fun provideUsersRepository(appDatabase: AppDatabase): UsersRepository =
-        UsersRepository(appDatabase.userDao())
-
+    val usersRepository: UsersRepository
+        get() = UsersRepository(appDatabase.userDao())
 }

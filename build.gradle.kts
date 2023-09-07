@@ -11,14 +11,11 @@ plugins {
     alias(libs.plugins.kotlinx.kover) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.ktlint) apply false
-    alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.kapt) apply false
 }
 
 allprojects {
     apply {
         plugin(rootProject.libs.plugins.google.ksp.get().pluginId)
-        plugin(rootProject.libs.plugins.kapt.get().pluginId)
         plugin(rootProject.libs.plugins.kotlinx.kover.get().pluginId)
         plugin(rootProject.libs.plugins.detekt.get().pluginId)
         plugin(rootProject.libs.plugins.ktlint.get().pluginId)

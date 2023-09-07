@@ -12,11 +12,13 @@ class UsersRepository(private val userDao: UserDao) {
         withLocalSource { UserDto().also { userDao.save(it) } }
 
     suspend fun newUserWith(
-        name: String, email: String
+        name: String,
+        email: String
     ): Result<UserDto> = withLocalSource {
         UserDto(
             userInfo = UserInfoDto(
-                name = name, email = email
+                name = name,
+                email = email
             )
         ).also {
             userDao.save(it)

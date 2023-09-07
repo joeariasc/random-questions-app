@@ -1,6 +1,7 @@
 package com.spotapp.mobile.app.navigation
 
-import com.spotapp.mobile.app.state.AppStateManager
+import com.spotapp.mobile.domain.model.state.AppState
+import com.spotapp.mobile.domain.usecases.GetCurrentAppState
 
 typealias Route = String
 
@@ -10,8 +11,8 @@ object Destinations {
 
     fun auth(): Route = "/auth"
 
-    suspend fun startDestination(appStateManager: AppStateManager): String {
-        if (appStateManager.hasUserSignedOn()) {
+    suspend fun startDestination(getCurrentAppState: GetCurrentAppState): String {
+        if (getCurrentAppState() == AppState.SIGNED_ON) {
             return home()
         }
         return auth()

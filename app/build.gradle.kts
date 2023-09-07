@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
     alias(libs.plugins.google.firebase.appdistribution)
-    alias(libs.plugins.hilt)
 }
 
 android {
@@ -128,10 +127,6 @@ android {
             }
         }
     }
-
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -146,7 +141,6 @@ dependencies {
 
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
 }

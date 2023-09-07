@@ -5,11 +5,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.spotapp.mobile.app.di.AppModule
+import com.spotapp.mobile.ui.ext.createViewModel
 import com.spotapp.mobile.ui.feature.auth.AuthScreen
+import com.spotapp.mobile.ui.feature.auth.AuthViewModel
 import com.spotapp.mobile.ui.feature.home.HomeScreen
 
 @Composable
 fun NavGraph(
+    appModule: AppModule,
     startDestination: String,
     navController: NavHostController
 ) {
@@ -25,7 +29,12 @@ fun NavGraph(
 
         composable(route = Destinations.auth()) {
             AuthScreen(
-                viewModel = viewModel(),
+                viewModel = createViewModel {
+                    AuthViewModel(
+                        appModule.domain.authenticateNewAnonymousUserUseCase,
+                        appModule.domain.authenticateNewUserWithEmailUseCase
+                    )
+                },
                 navigateToHome = {
                     navController.navigate(Destinations.home()) {
                         popUpTo(0)

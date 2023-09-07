@@ -45,8 +45,6 @@ dependencyResolutionManagement {
             version("firebaseCrashlyticsPlugin", "2.9.9")
             version("firebaseAppdistribution", "4.0.0")
             version("ktlint", "11.5.1")
-            version("hilt", "2.48")
-            version("kapt", "1.9.10")
 
             library(
                 "androidx-activity-compose",
@@ -65,6 +63,11 @@ dependencyResolutionManagement {
                 "androidx-lifecycle-runtime-ktx",
                 "androidx.lifecycle",
                 "lifecycle-runtime-ktx"
+            ).versionRef("lifecycleRuntimeKtx")
+            library(
+                "androidx-lifecycle-viewmodel-compose",
+                "androidx.lifecycle",
+                "lifecycle-viewmodel-compose"
             ).versionRef("lifecycleRuntimeKtx")
             library(
                 "androidx-material3",
@@ -134,12 +137,6 @@ dependencyResolutionManagement {
             library("material", "com.google.android.material", "material").versionRef("material")
             library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")
             library("mockk-android", "io.mockk", "mockk-android").versionRef("mockkAndroid")
-            library("hilt-android", "com.google.dagger", "hilt-android").versionRef("hilt")
-            library(
-                "hilt-compiler",
-                "com.google.dagger",
-                "hilt-android-compiler"
-            ).versionRef("hilt")
 
             plugin(
                 "android-application",
@@ -160,8 +157,6 @@ dependencyResolutionManagement {
                 "com.google.firebase.appdistribution"
             ).versionRef("firebaseAppdistribution")
             plugin("ktlint", "org.jlleitschuh.gradle.ktlint").versionRef("ktlint")
-            plugin("hilt", "com.google.dagger.hilt.android").versionRef("hilt")
-            plugin("kapt", "org.jetbrains.kotlin.kapt").versionRef("kapt")
         }
     }
 }
