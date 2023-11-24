@@ -24,6 +24,8 @@ dependencyResolutionManagement {
             version("coreSplashscreen", "1.0.1")
             version("firebaseAnalytics", "21.3.0")
             version("firebaseCrashlytics", "18.4.0")
+            version("firebaseAuth", "22.3.0")
+            version("dataStore", "1.0.0")
             version("junitKtx", "1.1.5")
             version("junit", "4.13.2")
             version("kotlinxCoroutinesCore", "1.7.3")
@@ -108,6 +110,16 @@ dependencyResolutionManagement {
                 "com.google.firebase",
                 "firebase-crashlytics"
             ).versionRef("firebaseCrashlytics")
+            library(
+                "firebase-auth",
+                "com.google.firebase",
+                "firebase-auth"
+            ).versionRef("firebaseAuth")
+            library(
+                "androidx-datastore",
+                "androidx.datastore",
+                "datastore-preferences"
+            ).versionRef("dataStore")
             library(
                 "androidx-navigation-compose",
                 "androidx.navigation",

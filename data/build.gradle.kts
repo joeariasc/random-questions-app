@@ -28,6 +28,8 @@ dependencies {
     api(libs.kotlinx.coroutines.core)
     api(libs.androidx.room.runtime)
     api(libs.androidx.room.ktx)
+    api(libs.firebase.auth)
+    api(libs.androidx.datastore)
 
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.room.compiler)

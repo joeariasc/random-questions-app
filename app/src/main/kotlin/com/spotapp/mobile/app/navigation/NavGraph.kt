@@ -31,8 +31,8 @@ fun NavGraph(
             AuthScreen(
                 viewModel = createViewModel {
                     AuthViewModel(
-                        appModule.domain.authenticateNewAnonymousUserUseCase,
-                        appModule.domain.authenticateNewUserWithEmailUseCase
+                        registerUserFirebase = appModule.domain.authenticateUserFirebase,
+                        signInUserFirebase = appModule.domain.signInUserFirebase
                     )
                 },
                 navigateToHome = {

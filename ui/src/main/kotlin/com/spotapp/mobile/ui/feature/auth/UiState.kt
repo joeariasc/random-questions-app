@@ -15,15 +15,17 @@ sealed interface UiState {
         override val isAuthenticated: Boolean = false
     ) : UiState
 
-    data class Anonymous(
-        override val errorMessage: String? = null,
-        override val isAuthenticated: Boolean = false
-    ) : UiState
-
-    data class WithNameAndEmail(
+    data class Register(
         override val errorMessage: String? = null,
         override val isAuthenticated: Boolean = false,
-        val name: String?,
-        val email: String?
+        val email: String?,
+        val password: String?,
+    ) : UiState
+
+    data class Login(
+        override val errorMessage: String? = null,
+        override val isAuthenticated: Boolean = false,
+        val email: String?,
+        val password: String?,
     ) : UiState
 }

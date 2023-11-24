@@ -1,19 +1,26 @@
 package com.spotapp.mobile.ui.feature.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -29,22 +36,24 @@ fun AuthScreen(viewModel: AuthViewModel, navigateToHome: () -> Unit) {
 
     Auth(
         state = uiState,
-        onAnonymousSignInClick = viewModel::onAnonymousSignInClick,
-        onUsingNameAndEmailSignInClick = viewModel::onUsingNameAndEmailSignInClick,
-        onNameChange = viewModel::onNameChange,
+        onRegisterClick = viewModel::registerNewUserClick,
+        onLoginClick = viewModel::logInClick,
+        onPasswordChange = viewModel::onPasswordChange,
         onEmailChange = viewModel::onEmailChange,
-        onSignInWithNameAndEmailClick = viewModel::onSignInWithNameAndEmailClick
+        onRegisterUser = viewModel::onRegisterUser,
+        onLoginUserClick = viewModel::onLogInUser
     )
 }
 
 @Composable
 private fun Auth(
     state: UiState,
-    onAnonymousSignInClick: () -> Unit = {},
-    onUsingNameAndEmailSignInClick: () -> Unit = {},
-    onNameChange: (String) -> Unit = {},
+    onRegisterClick: () -> Unit = {},
+    onLoginClick: () -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
     onEmailChange: (String) -> Unit = {},
-    onSignInWithNameAndEmailClick: () -> Unit = {}
+    onRegisterUser: () -> Unit = {},
+    onLoginUserClick: () -> Unit = {},
 ) {
     Column(
         Modifier
@@ -53,54 +62,31 @@ private fun Auth(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(modifier = Modifier.padding(vertical = 10.dp), text = "Sign-In to Spot")
+        Text(modifier = Modifier.padding(vertical = 10.dp), text = "Welcome to Spot")
 
         when (state) {
-            is UiState.Anonymous -> AnonymousAuth()
-            is UiState.Idle -> IdleAuth(onAnonymousSignInClick, onUsingNameAndEmailSignInClick)
-            is UiState.WithNameAndEmail -> NameAndEmailAuth(
-                state,
-                onNameChange,
-                onEmailChange,
-                onSignInWithNameAndEmailClick
+            is UiState.Idle -> IdleAuth(
+                onRegisterClick,
+                onLoginClick,
+            )
+
+            is UiState.Register -> RegisterUser(
+                state = state,
+                onEmailChange = onEmailChange,
+                onPasswordChange = onPasswordChange,
+                onButtonAction = onRegisterUser
+            )
+
+            is UiState.Login -> SignInUser(
+                state = state,
+                onEmailChange = onEmailChange,
+                onPasswordChange = onPasswordChange,
+                onButtonAction = onLoginUserClick
             )
 
             is UiState.Loading -> LoadingAuth()
         }
     }
-}
-
-@Composable
-private fun NameAndEmailAuth(
-    uiState: UiState.WithNameAndEmail,
-    onNameChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
-    onSignInClick: () -> Unit
-) {
-    Column {
-        OutlinedTextField(
-            value = uiState.name ?: "",
-            placeholder = {
-                Text(text = "Full Name")
-            },
-            onValueChange = onNameChange
-        )
-        OutlinedTextField(
-            value = uiState.email ?: "",
-            placeholder = {
-                Text(text = "Email")
-            },
-            onValueChange = onEmailChange
-        )
-        Button(onClick = onSignInClick) {
-            Text(text = "Sign-In Now")
-        }
-    }
-}
-
-@Composable
-private fun AnonymousAuth() {
-    Text(text = "Signed-In Anonymously")
 }
 
 @Composable
@@ -110,15 +96,94 @@ private fun LoadingAuth() {
 
 @Composable
 private fun IdleAuth(
-    onAnonymousSignInClick: () -> Unit,
-    onUsingNameAndEmailSignInClick: () -> Unit
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit,
 ) {
-    Column {
-        Button(onClick = onAnonymousSignInClick) {
-            Text(text = "Anonymously")
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = onRegisterClick) {
+            Text(text = "Register on the App")
         }
-        Button(onClick = onUsingNameAndEmailSignInClick) {
-            Text(text = "Using name and email")
+        Button(onClick = onLoginClick) {
+            Text(text = "Are you already registered? Log In")
+        }
+    }
+}
+
+@Composable
+private fun RegisterUser(
+    state: UiState.Register,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onButtonAction: () -> Unit,
+) {
+    AuthenticationContent(
+        email = state.email,
+        password = state.password,
+        onEmailChange = onEmailChange,
+        onPasswordChange = onPasswordChange,
+        errorMessage = state.errorMessage,
+        buttonText = "Register User",
+        onButtonAction = onButtonAction,
+    )
+}
+
+@Composable
+private fun SignInUser(
+    state: UiState.Login,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onButtonAction: () -> Unit,
+) {
+    AuthenticationContent(
+        email = state.email,
+        password = state.password,
+        onEmailChange = onEmailChange,
+        onPasswordChange = onPasswordChange,
+        errorMessage = state.errorMessage,
+        buttonText = "Sign In",
+        onButtonAction = onButtonAction,
+    )
+}
+
+@Composable
+private fun AuthenticationContent(
+    email: String?,
+    password: String?,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    errorMessage: String? = null,
+    buttonText: String,
+    onButtonAction: () -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        OutlinedTextField(
+            value = email ?: "",
+            placeholder = {
+                Text(text = "Email")
+            },
+            onValueChange = onEmailChange,
+            isError = errorMessage != null,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        )
+        OutlinedTextField(
+            value = password ?: "",
+            placeholder = {
+                Text(text = "Password")
+            },
+            onValueChange = onPasswordChange,
+            isError = errorMessage != null,
+        )
+        if (errorMessage != null) {
+            Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
+        }
+        Button(onClick = onButtonAction) {
+            Text(text = buttonText, textAlign = TextAlign.Center)
         }
     }
 }
@@ -135,9 +200,9 @@ fun AuthIdlePreview() {
 @Composable
 fun AuthNameAndEmailPreview() {
     Auth(
-        state = UiState.WithNameAndEmail(
+        state = UiState.Register(
             email = null,
-            name = null
+            password = null
         )
     )
 }
