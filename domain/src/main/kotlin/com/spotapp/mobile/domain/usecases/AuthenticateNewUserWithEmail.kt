@@ -6,9 +6,4 @@ import com.spotapp.mobile.domain.model.ext.asDomainResult
 import com.spotapp.mobile.domain.model.user.User
 
 class AuthenticateNewUserWithEmail(private val usersRepository: UsersRepository) {
-
-    suspend operator fun invoke(
-        name: String,
-        email: String
-    ): Result<User> = usersRepository.newUserWith(name, email).asDomainResult()
 }

@@ -31,7 +31,7 @@ dependencyResolutionManagement {
             version("kotlinxCoroutinesCore", "1.7.3")
             version("ktlintComposeRules", "0.0.26")
             version("lifecycleRuntimeKtx", "2.6.1")
-            version("material", "1.9.0")
+            //version("material", "1.9.0")
             version("material3", "1.1.1")
             version("mockkAndroid", "1.13.5")
             version("navigationCompose", "2.7.1")
@@ -146,7 +146,7 @@ dependencyResolutionManagement {
                 "com.twitter.compose.rules",
                 "ktlint"
             ).versionRef("ktlintComposeRules")
-            library("material", "com.google.android.material", "material").versionRef("material")
+            //library("material", "com.google.android.material", "material").versionRef("material")
             library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")
             library("mockk-android", "io.mockk", "mockk-android").versionRef("mockkAndroid")
 

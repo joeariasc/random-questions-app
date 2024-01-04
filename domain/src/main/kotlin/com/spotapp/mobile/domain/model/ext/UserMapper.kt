@@ -14,10 +14,23 @@ private fun UserDto.asUser(): User =
     User(userId = id, name = userInfo?.name, email = userInfo?.email)
 
 
-fun FirebaseResult<AuthResult>.asUiResult(): DomainResult<User> {
+/*fun FirebaseResult<AuthResult>.asUiResult(): DomainResult<User> {
     return if (error != null) DomainResult.Error(exception = error!!) else DomainResult.Success(
         data = User(
             userId = 0, name = data?.user?.displayName, email = data?.user?.email
+        )
+    )
+}*/
+
+fun Result<AuthResult>.asUiResult(): DomainResult<User> {
+    return if (isFailure) DomainResult.Error(
+        exception = Exception(
+            exceptionOrNull()?.message,
+            exceptionOrNull()
+        )
+    ) else DomainResult.Success(
+        data = User(
+            userId = 0, name = getOrNull()?.user?.displayName, email = getOrNull()?.user?.email
         )
     )
 }

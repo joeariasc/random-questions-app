@@ -3,14 +3,11 @@ package com.spotapp.mobile.data.repository
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.spotapp.mobile.data.DataResult
-import com.spotapp.mobile.data.Result
-import com.spotapp.mobile.data.mapper.withLocalSource
 import com.spotapp.mobile.data.sources.database.users.UserDao
-import com.spotapp.mobile.data.sources.database.users.UserDto
-import com.spotapp.mobile.data.sources.database.users.UserInfoDto
 import com.spotapp.mobile.data.sources.preferences.PreferencesKeys
 import com.spotapp.mobile.data.sources.preferences.UserPreferencesManager
 import com.spotapp.mobile.data.sources.preferences.model.SessionState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
@@ -19,58 +16,62 @@ import kotlinx.coroutines.withContext
 class UsersRepository(
     private val userDao: UserDao,
     private val auth: FirebaseAuth,
-    private val userPreferences: UserPreferencesManager
+    private val userPreferencesManager: UserPreferencesManager,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
-    suspend fun newAnonymousUser(): Result<UserDto> =
-        withLocalSource { UserDto().also { userDao.save(it) } }
-
-    suspend fun newUserWith(
-        name: String,
-        email: String
-    ): Result<UserDto> = withLocalSource {
-        UserDto(
-            userInfo = UserInfoDto(
-                name = name,
-                email = email
-            )
-        ).also {
-            userDao.save(it)
+    suspend fun signUpUserFirebase(
+        fullName: String,
+        email: String,
+        password: String
+    ): Result<AuthResult> {
+        return withContext(coroutineDispatcher) {
+            runCatching {
+                auth.createUserWithEmailAndPassword(email, password).await()
+            }.onSuccess { authResult ->
+                userPreferencesManager.persist {
+                    it[PreferencesKeys.sessionStatus] = SessionState.REGISTERED.name
+                    it[PreferencesKeys.userName] = fullName
+                    it[PreferencesKeys.userEmail] = authResult?.user?.email ?: email
+                }
+                DataResult(
+                    data = authResult
+                )
+            }.onFailure { throwable ->
+                DataResult<AuthResult>(error = throwable.message)
+            }
         }
     }
 
-    suspend fun signInUserFirebase(email: String, password: String): DataResult<AuthResult> =
-        withContext(Dispatchers.IO) {
-            try {
-                val authResult = auth.signInWithEmailAndPassword(email, password).await()
-                userPreferences.persist {
+    suspend fun signInUserFirebase(email: String, password: String): Result<AuthResult> {
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                auth.signInWithEmailAndPassword(email, password).await()
+            }.onSuccess { authResult ->
+                userPreferencesManager.persist {
                     it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
-                    it[PreferencesKeys.userName] = authResult?.user?.displayName ?: ""
-                    it[PreferencesKeys.userEmail] = authResult?.user?.email ?: ""
                 }
-                DataResult(data = authResult)
-            } catch (e: Exception) {
-                DataResult(error = e)
+                DataResult(
+                    data = authResult
+                )
+            }.onFailure { throwable ->
+                DataResult<AuthResult>(error = throwable.message)
             }
         }
+    }
 
-    suspend fun registerUserFirebase(email: String, password: String): DataResult<AuthResult> =
-        withContext(Dispatchers.IO) {
-            try {
-                val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-                userPreferences.persist {
-                    it[PreferencesKeys.sessionStatus] = SessionState.REGISTERED.name
-                    it[PreferencesKeys.userName] = authResult?.user?.displayName ?: ""
-                    it[PreferencesKeys.userEmail] = authResult?.user?.email ?: ""
-                }
-                DataResult(data = authResult)
-            } catch (e: Exception) {
-                DataResult(error = e)
-            }
-        }
+    suspend fun signOutFirebase() {
+        auth.signOut()
+    }
+
+    suspend fun getUserInformation(): Pair<String?, String?> {
+        val preferences = userPreferencesManager.userPreferences.first()
+        return Pair(auth.currentUser?.displayName, auth.currentUser?.email)
+    }
+
 
     suspend fun hasUserSignedOn(): DataResult<Boolean> =
         withContext(Dispatchers.IO) {
-            DataResult(data = userPreferences.userPreferences.first().sessionStatus != SessionState.UNREGISTERED)
+            DataResult(data = auth.currentUser != null)
         }
 }

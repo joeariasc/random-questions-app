@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.spotapp.mobile.domain.model.Result
 import com.spotapp.mobile.domain.model.user.User
-import com.spotapp.mobile.domain.usecases.RegisterUserFirebase
+import com.spotapp.mobile.domain.usecases.SignUpUserFirebase
 import com.spotapp.mobile.domain.usecases.SignInUserFirebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val registerUserFirebase: RegisterUserFirebase,
+    private val registerUserFirebase: SignUpUserFirebase,
     private val signInUserFirebase: SignInUserFirebase,
 ) : ViewModel() {
 
@@ -63,10 +63,6 @@ class AuthViewModel(
             }
             return
         }
-
-        authenticateUser {
-            signInUserFirebase(email, password)
-        }
     }
 
     fun onRegisterUser() {
@@ -85,10 +81,6 @@ class AuthViewModel(
                 )
             }
             return
-        }
-
-        authenticateUser {
-            registerUserFirebase(email, password)
         }
     }
 

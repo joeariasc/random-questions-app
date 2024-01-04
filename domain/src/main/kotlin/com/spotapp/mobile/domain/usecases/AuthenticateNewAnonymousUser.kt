@@ -6,7 +6,4 @@ import com.spotapp.mobile.domain.model.ext.asDomainResult
 import com.spotapp.mobile.domain.model.user.User
 
 class AuthenticateNewAnonymousUser(private val usersRepository: UsersRepository) {
-
-    suspend operator fun invoke(): Result<User> =
-        usersRepository.newAnonymousUser().asDomainResult()
 }
