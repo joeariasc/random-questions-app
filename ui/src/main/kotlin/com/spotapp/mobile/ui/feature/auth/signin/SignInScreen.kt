@@ -1,6 +1,5 @@
 package com.spotapp.mobile.ui.feature.auth.signin
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,8 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -38,6 +39,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spotapp.mobile.ui.R
+import com.spotapp.mobile.ui.common.HeadLineTitle
+import com.spotapp.mobile.ui.common.InputPasswordField
+import com.spotapp.mobile.ui.common.InputStringField
+import com.spotapp.mobile.ui.common.SingleButton
+import com.spotapp.mobile.ui.common.StandardAlertDialog
+import com.spotapp.mobile.ui.feature.auth.AuthLayout
 
 @Composable
 fun SignInScreen(
@@ -51,18 +58,15 @@ fun SignInScreen(
     var pass by remember { mutableStateOf("") }
 
     if (uiState.errorMessage != null) {
-        Toast.makeText(LocalContext.current, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+        StandardAlertDialog(
+            onDismissRequest = viewModel::cleanError,
+            dialogText = uiState.errorMessage!!
+        )
     }
 
     if (uiState.isSuccessfullySignIn) onGoToHome()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.Start
-    ) {
+    AuthLayout {
         IconButton(onClick = onGoBack) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
@@ -70,71 +74,23 @@ fun SignInScreen(
             )
         }
 
-        Text(
-            modifier = Modifier.width(200.dp),
-            text = "Welcome Back!",
-            lineHeight = 40.sp,
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold
-        )
+        HeadLineTitle(text = stringResource(id = R.string.welcome_back))
 
-        TextField(
+        InputStringField(
             value = email,
-            onValueChange = {
-                viewModel.cleanError()
-                email = it
-            },
-            label = {
-                Text(text = "Email Address")
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true,
+            onValueChange = { email = it },
+            label = stringResource(id = R.string.email_address_label),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-
-        var passwordVisible by remember { mutableStateOf(false) }
-
-        TextField(
-            value = pass,
-            onValueChange = {
-                viewModel.cleanError()
-                pass = it
-            },
-            label = {
-                Text(text = "Password")
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-            ),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val image = if (passwordVisible)
-                    painterResource(id = R.drawable.visibility_icon)
-                else painterResource(id = R.drawable.visibility_icon_off)
-
-                IconButton(onClick = {
-                    passwordVisible = !passwordVisible
-                }) {
-                    Icon(
-                        painter = image, contentDescription = null
-                    )
-                }
-            },
-        )
+        InputPasswordField(value = pass, onValueChange = { pass = it })
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Remember me")
+            Text(text = stringResource(id = R.string.remember_label))
 
             var switchState by remember {
                 mutableStateOf(false)
@@ -146,18 +102,10 @@ fun SignInScreen(
             })
         }
 
-        Button(
+        SingleButton(
             onClick = { viewModel.onSignIn(email, pass) },
-            Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(red = 242, green = 58, blue = 68, alpha = 255),
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Sign In", fontWeight = FontWeight.Bold)
-        }
+            buttonText = stringResource(id = R.string.sign_in_label)
+        )
 
     }
 }

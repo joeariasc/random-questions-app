@@ -28,7 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -37,6 +39,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spotapp.mobile.ui.R
+import com.spotapp.mobile.ui.common.HeadLineTitle
+import com.spotapp.mobile.ui.common.InputPasswordField
+import com.spotapp.mobile.ui.common.InputStringField
+import com.spotapp.mobile.ui.common.SingleButton
+import com.spotapp.mobile.ui.common.StandardAlertDialog
+import com.spotapp.mobile.ui.feature.auth.AuthLayout
 
 @Composable
 fun SignUpScreen(
@@ -51,18 +59,15 @@ fun SignUpScreen(
     var pass by remember { mutableStateOf("") }
 
     if (uiState.errorMessage != null) {
-        Toast.makeText(LocalContext.current, uiState.errorMessage, Toast.LENGTH_SHORT).show()
+        StandardAlertDialog(
+            onDismissRequest = viewModel::cleanError,
+            dialogText = uiState.errorMessage!!
+        )
     }
 
     if (uiState.isSuccessfullySignUp) onGoToSignIn()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.Start
-    ) {
+    AuthLayout {
         IconButton(onClick = onGoBack) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
@@ -70,92 +75,27 @@ fun SignUpScreen(
             )
         }
 
-        Text(
-            modifier = Modifier.width(250.dp),
-            text = "Create new account",
-            lineHeight = 40.sp,
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold
-        )
+        HeadLineTitle(text = stringResource(id = R.string.new_account))
 
-        TextField(
+        InputStringField(
             value = name,
-            onValueChange = {
-                viewModel.cleanError()
-                name = it
-            },
-            label = {
-                Text(text = "Full name")
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-            ),
-            maxLines = 1,
+            onValueChange = { name = it },
+            label = stringResource(id = R.string.new_name_label)
         )
 
-        TextField(
+        InputStringField(
             value = email,
-            onValueChange = {
-                viewModel.cleanError()
-                email = it
-            },
-            label = {
-                Text(text = "Email address")
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            maxLines = 1
+            onValueChange = { email = it },
+            label = stringResource(id = R.string.email_address_label),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-        var passwordVisible by remember { mutableStateOf(false) }
+        InputPasswordField(value = pass, onValueChange = { pass = it })
 
-        TextField(
-            value = pass,
-            onValueChange = {
-                pass = it
-            },
-            label = {
-                Text(text = "Create password")
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val image = if (passwordVisible)
-                    painterResource(id = R.drawable.visibility_icon)
-                else painterResource(id = R.drawable.visibility_icon_off)
-
-                IconButton(onClick = {
-                    viewModel.cleanError()
-                    passwordVisible = !passwordVisible
-                }) {
-                    Icon(painter = image, contentDescription = null)
-                }
-            },
-            maxLines = 1,
-        )
-
-
-
-        Button(
+        SingleButton(
             onClick = { viewModel.onSignUp(name, email, pass) },
-            Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(red = 242, green = 58, blue = 68, alpha = 255),
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Sign Up!")
-        }
+            buttonText = stringResource(id = R.string.sign_up)
+        )
 
     }
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wait">Wait!</string>
+    <string name="generic_error_message">an error occurred, please try again</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="email_address_label">Email Address</string>
+    <string name="password_label">Password</string>
+    <string name="remember_label">Remember me</string>
+    <string name="sign_in_label">Sign In</string>
+    <string name="new_account">Create New Account</string>
+    <string name="new_name_label">Full name</string>
+    <string name="new_password_label">Create password</string>
+    <string name="sign_up">Sign Up!</string>
+</resources>

@@ -42,11 +42,13 @@ fun NavGraph(
                         signInUserFirebase = appModule.domain.signInUserFirebase
                     )
                 },
-                onGoBack = { navController.navigateUp() },
-                onGoToHome = {
+                onGoBack = {
                     navController.navigate(Destinations.welcome()) {
                         popUpTo(0)
                     }
+                },
+                onGoToHome = {
+                    navController.navigate(Destinations.home())
                 }
             )
         }
