@@ -2,8 +2,7 @@ package com.spotapp.mobile.ui.feature.auth.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.spotapp.mobile.domain.model.Result
-import com.spotapp.mobile.domain.usecases.SignUpUserFirebase
+import com.spotapp.mobile.data.repository.UsersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(
-    private val registerUserFirebase: SignUpUserFirebase
+    private val usersRepository: UsersRepository
 ) : ViewModel() {
     private val viewModelState: MutableStateFlow<SignUpViewModelState> =
         MutableStateFlow(SignUpViewModelState())
@@ -31,40 +30,33 @@ class SignUpViewModel(
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            registerUserFirebase(fullName, email, password).let { result ->
-                when (result) {
-                    is Result.Loading -> {
-                        viewModelState.update {
-                            it.copy(
-                                isLoading = true
-                            )
-                        }
-                    }
-
-                    is Result.Error -> {
-                        viewModelState.update {
-                            it.copy(
-                                errorMessage = result.exception.message,
-                                isLoading = false
-                            )
-                        }
-                    }
-
-                    is Result.Success -> {
-                        viewModelState.update {
-                            it.copy(
-                                isSuccessfullySignUp = true,
-                                errorMessage = null,
-                                isLoading = false
-                            )
-                        }
-                    }
+            viewModelState.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+            runCatching {
+                usersRepository.signUpUserFirebase(fullName, email, password)
+            }.onSuccess {
+                viewModelState.update {
+                    it.copy(
+                        isSuccessfullySignUp = true,
+                        errorMessage = null,
+                        isLoading = false
+                    )
+                }
+            }.onFailure {
+                viewModelState.update {
+                    it.copy(
+                        errorMessage = it.errorMessage,
+                        isLoading = false
+                    )
                 }
             }
         }
     }
 
-    fun cleanError(){
+    fun cleanError() {
         viewModelState.update { it.copy(errorMessage = null) }
     }
 

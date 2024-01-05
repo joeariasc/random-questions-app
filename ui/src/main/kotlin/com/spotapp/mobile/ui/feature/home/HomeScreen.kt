@@ -46,8 +46,8 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
                     Text(text = "Hello From Home")
-                    Text(text = "Name: ${uiState.currentUserInformation.first}")
-                    Text(text = "Email: ${uiState.currentUserInformation.second}")
+                    Text(text = "Name: ${uiState.currentUserInformation?.userInfo?.name}")
+                    Text(text = "Email: ${uiState.currentUserInformation?.userInfo?.email}")
 
                 }
             }

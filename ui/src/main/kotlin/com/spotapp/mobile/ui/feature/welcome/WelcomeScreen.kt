@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,7 +78,7 @@ fun WelcomeScreen(
                         .height(50.dp)
                         .absolutePadding(bottom = 5.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(red = 242, green = 58, blue = 68, alpha = 255),
+                        containerColor = colorResource(id = R.color.mainColor),
                         contentColor = Color.White
                     )
                 ) {
@@ -93,7 +94,7 @@ fun WelcomeScreen(
                 ) {
                     Text(
                         text = "No account yet? Register here",
-                        color = Color(red = 242, green = 58, blue = 68, alpha = 255)
+                        color = colorResource(id = R.color.mainColor),
                     )
 
                 }
