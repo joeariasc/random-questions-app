@@ -1,14 +1,11 @@
 package com.spotapp.mobile.app.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.spotapp.mobile.app.di.AppModule
 import com.spotapp.mobile.ui.ext.createViewModel
-import com.spotapp.mobile.ui.feature.auth.AuthScreen
-import com.spotapp.mobile.ui.feature.auth.AuthViewModel
 import com.spotapp.mobile.ui.feature.auth.signin.SignInScreen
 import com.spotapp.mobile.ui.feature.auth.signin.SignInViewModel
 import com.spotapp.mobile.ui.feature.auth.signup.SignUpScreen
@@ -39,7 +36,7 @@ fun NavGraph(
             SignInScreen(
                 viewModel = createViewModel {
                     SignInViewModel(
-                        signInUserFirebase = appModule.domain.signInUserFirebase
+                        usersRepository = appModule.data.usersRepository
                     )
                 },
                 onGoBack = {
@@ -56,9 +53,7 @@ fun NavGraph(
         composable(route = Destinations.signUp()) {
             SignUpScreen(
                 viewModel = createViewModel {
-                    SignUpViewModel(
-                        registerUserFirebase = appModule.domain.signUpUserFirebase
-                    )
+                    SignUpViewModel(usersRepository = appModule.data.usersRepository)
                 },
                 onGoBack = {
                     navController.navigate(Destinations.welcome()) {
@@ -72,25 +67,7 @@ fun NavGraph(
         composable(route = Destinations.home()) {
             HomeScreen(
                 viewModel = createViewModel {
-                    HomeViewModel(
-                        getUserInformation = appModule.domain.getUserInformation
-                    )
-                }
-            )
-        }
-
-        composable(route = Destinations.auth()) {
-            AuthScreen(
-                viewModel = createViewModel {
-                    AuthViewModel(
-                        registerUserFirebase = appModule.domain.signUpUserFirebase,
-                        signInUserFirebase = appModule.domain.signInUserFirebase
-                    )
-                },
-                navigateToHome = {
-                    navController.navigate(Destinations.home()) {
-                        popUpTo(0)
-                    }
+                    HomeViewModel(usersRepository = appModule.data.usersRepository)
                 }
             )
         }
