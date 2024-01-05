@@ -1,9 +1,10 @@
 package com.spotapp.mobile.data.repository
 
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.spotapp.mobile.data.DataResult
 import com.spotapp.mobile.data.sources.database.users.UserDao
+import com.spotapp.mobile.data.sources.database.users.UserDto
+import com.spotapp.mobile.data.sources.database.users.UserInfoDto
 import com.spotapp.mobile.data.sources.preferences.PreferencesKeys
 import com.spotapp.mobile.data.sources.preferences.UserPreferencesManager
 import com.spotapp.mobile.data.sources.preferences.model.SessionState
@@ -24,39 +25,36 @@ class UsersRepository(
         fullName: String,
         email: String,
         password: String
-    ): Result<AuthResult> {
+    ): UserDto {
         return withContext(coroutineDispatcher) {
             runCatching {
                 auth.createUserWithEmailAndPassword(email, password).await()
-            }.onSuccess { authResult ->
-                userPreferencesManager.persist {
-                    it[PreferencesKeys.sessionStatus] = SessionState.REGISTERED.name
-                    it[PreferencesKeys.userName] = fullName
-                    it[PreferencesKeys.userEmail] = authResult?.user?.email ?: email
+            }.fold(
+                onSuccess = { _ ->
+                    syncUserInfo(email, fullName)
+                    getUserInformation()
+                }, onFailure = {
+                    throw it
                 }
-                DataResult(
-                    data = authResult
-                )
-            }.onFailure { throwable ->
-                DataResult<AuthResult>(error = throwable.message)
-            }
+            )
         }
     }
 
-    suspend fun signInUserFirebase(email: String, password: String): Result<AuthResult> {
+    suspend fun signInUserFirebase(email: String, password: String): UserDto {
         return withContext(Dispatchers.IO) {
             runCatching {
                 auth.signInWithEmailAndPassword(email, password).await()
-            }.onSuccess { authResult ->
-                userPreferencesManager.persist {
-                    it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
+            }.fold(
+                onSuccess = { _ ->
+                    userPreferencesManager.persist {
+                        it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
+                    }
+                    // TODO: Implement firestore synchronization
+                    getUserInformation()
+                }, onFailure = {
+                    throw it
                 }
-                DataResult(
-                    data = authResult
-                )
-            }.onFailure { throwable ->
-                DataResult<AuthResult>(error = throwable.message)
-            }
+            )
         }
     }
 
@@ -64,9 +62,29 @@ class UsersRepository(
         auth.signOut()
     }
 
-    suspend fun getUserInformation(): Pair<String?, String?> {
+    suspend fun getUserInformation(): UserDto {
         val preferences = userPreferencesManager.userPreferences.first()
-        return Pair(auth.currentUser?.displayName, auth.currentUser?.email)
+        return userDao.findByEmail(preferences.userEmail ?: "")
+    }
+
+    private suspend fun syncUserInfo(email: String, fullName: String) {
+        getUserInformation().let {
+            if (it.userInfo == null) {
+                // Sync user information
+            }
+        }
+        UserDto(
+            userInfo = UserInfoDto(
+                email = email,
+                name = fullName,
+            )
+        ).also {
+            userDao.save(it)
+        }
+        userPreferencesManager.persist {
+            it[PreferencesKeys.sessionStatus] = SessionState.REGISTERED.name
+            it[PreferencesKeys.userEmail] = email
+        }
     }
 
 
