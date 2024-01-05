@@ -16,6 +16,8 @@ object Destinations {
 
     fun auth(): Route = "/auth"
 
+    fun settings(): Route = "/settings"
+
     suspend fun startDestination(getCurrentAppState: GetCurrentAppState): String =
         if (getCurrentAppState()) home() else welcome()
 }

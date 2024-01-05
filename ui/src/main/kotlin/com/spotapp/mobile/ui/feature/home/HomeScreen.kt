@@ -31,51 +31,16 @@ fun HomeScreen(viewModel: HomeViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
 
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceAround
-                ) {
-                    Text(text = "Hello From Home")
-                    Text(text = "Name: ${uiState.currentUserInformation?.userInfo?.name}")
-                    Text(text = "Email: ${uiState.currentUserInformation?.userInfo?.email}")
-
-                }
-            }
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Scaffold(
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    onClick = { scope.launch { drawerState.apply { if (isClosed) open() else close() } } },
-                ) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                    Text("Show drawer")
-                }
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Home Page",
-                    style = MaterialTheme.typography.displayLarge
-                )
-            }
-        }
+        Text(
+            text = "Home Page",
+            style = MaterialTheme.typography.displayLarge
+        )
     }
 }

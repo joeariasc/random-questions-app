@@ -13,4 +13,5 @@
     <string name="new_name_label">Full name</string>
     <string name="new_password_label">Create password</string>
     <string name="sign_up">Sign Up!</string>
+    <string name="sign_out">Sign Out</string>
 </resources>
