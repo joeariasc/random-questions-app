@@ -15,4 +15,8 @@ interface UserDao {
     @Query("SELECT * FROM users")
     @Throws(SQLiteException::class)
     suspend fun findAll(): List<UserDto>
+
+    @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
+    @Throws(SQLiteException::class)
+    suspend fun findByEmail(email: String): UserDto
 }
