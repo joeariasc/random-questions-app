@@ -1,5 +1,6 @@
 package com.spotapp.mobile.data.repository
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.spotapp.mobile.data.DataResult
 import com.spotapp.mobile.data.sources.database.users.UserDao
@@ -25,14 +26,13 @@ class UsersRepository(
         fullName: String,
         email: String,
         password: String
-    ): UserDto {
+    ) {
         return withContext(coroutineDispatcher) {
             runCatching {
                 auth.createUserWithEmailAndPassword(email, password).await()
             }.fold(
                 onSuccess = { _ ->
                     syncUserInfo(email, fullName)
-                    getUserInformation()
                 }, onFailure = {
                     throw it
                 }
@@ -40,17 +40,17 @@ class UsersRepository(
         }
     }
 
-    suspend fun signInUserFirebase(email: String, password: String): UserDto {
+    suspend fun signInUserFirebase(email: String, password: String) {
         return withContext(Dispatchers.IO) {
             runCatching {
                 auth.signInWithEmailAndPassword(email, password).await()
             }.fold(
-                onSuccess = { _ ->
+                onSuccess = {
+                    syncUserInfo(email)
                     userPreferencesManager.persist {
                         it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
                     }
                     // TODO: Implement firestore synchronization
-                    getUserInformation()
                 }, onFailure = {
                     throw it
                 }
@@ -58,8 +58,16 @@ class UsersRepository(
         }
     }
 
-    suspend fun signOutFirebase() {
-        auth.signOut()
+    fun signOutFirebase() {
+        runCatching {
+            auth.signOut()
+        }.fold(
+            onSuccess = {
+                Log.d("signOutFirebase", "signOut successful!")
+            }, onFailure = {
+                throw it
+            }
+        )
     }
 
     suspend fun getUserInformation(): UserDto {
@@ -67,20 +75,20 @@ class UsersRepository(
         return userDao.findByEmail(preferences.userEmail ?: "")
     }
 
-    private suspend fun syncUserInfo(email: String, fullName: String) {
-        getUserInformation().let {
-            if (it.userInfo == null) {
-                // Sync user information
-            }
+    private suspend fun syncUserInfo(email: String, fullName: String? = null) {
+        if (fullName == null) {
+            // Sync user information
         }
+
         UserDto(
             userInfo = UserInfoDto(
                 email = email,
-                name = fullName,
+                name = fullName ?: "",
             )
         ).also {
             userDao.save(it)
         }
+
         userPreferencesManager.persist {
             it[PreferencesKeys.sessionStatus] = SessionState.REGISTERED.name
             it[PreferencesKeys.userEmail] = email

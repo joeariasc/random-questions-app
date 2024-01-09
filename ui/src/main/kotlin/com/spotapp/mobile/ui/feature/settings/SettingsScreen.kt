@@ -1,11 +1,11 @@
 package com.spotapp.mobile.ui.feature.settings
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +23,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,22 +33,37 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.spotapp.mobile.ui.R
+import com.spotapp.mobile.ui.common.StandardAlertDialog
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
+    onGoToWelcome: () -> Unit,
+    paddingValues: PaddingValues
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    if (uiState.isLoggedOut) onGoToWelcome()
+
+    if (uiState.errorMessage != null) {
+        StandardAlertDialog(
+            onDismissRequest = viewModel::cleanError,
+            dialogText = uiState.errorMessage!!
+        )
+    }
+
     Column(
         modifier = Modifier
+            .padding(paddingValues)
             .padding(12.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfilePic()
-        Spacer(modifier = Modifier.height(12.dp))
         Card(
             modifier = Modifier.padding(12.dp),
             colors = CardDefaults.cardColors(
@@ -66,7 +83,11 @@ fun SettingsScreen() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Text(text = "Joe Arias")
+                    Text(
+                        text = uiState.userDto?.userInfo?.name.let {
+                            if (it.isNullOrEmpty()) "No Name" else it
+                        }
+                    )
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -78,7 +99,7 @@ fun SettingsScreen() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Text(text = "Whats Up!")
+                    Text(text = uiState.userDto?.userInfo?.email ?: "No Email")
                 }
             }
         }
@@ -86,9 +107,9 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(12.dp))
 
         ExtendedFloatingActionButton(
-            onClick = {  },
+            onClick = viewModel::signOut,
             icon = { Icon(Icons.Filled.Edit, null) },
-            text = { Text(text = "Extended FAB") },
+            text = { Text(text = stringResource(id = R.string.sign_out)) },
         )
     }
 }
@@ -122,10 +143,4 @@ private fun ProfilePic() {
             .padding(4.dp)
             .clip(CircleShape)
     )
-}
-
-@Preview
-@Composable
-fun SettingsPreview() {
-    SettingsScreen()
 }

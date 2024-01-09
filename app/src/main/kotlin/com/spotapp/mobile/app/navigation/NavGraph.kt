@@ -1,11 +1,6 @@
 package com.spotapp.mobile.app.navigation
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
@@ -36,6 +31,7 @@ import com.spotapp.mobile.ui.feature.auth.signup.SignUpViewModel
 import com.spotapp.mobile.ui.feature.home.HomeScreen
 import com.spotapp.mobile.ui.feature.home.HomeViewModel
 import com.spotapp.mobile.ui.feature.settings.SettingsScreen
+import com.spotapp.mobile.ui.feature.settings.SettingsViewModel
 import com.spotapp.mobile.ui.feature.welcome.WelcomeScreen
 import kotlinx.coroutines.launch
 
@@ -50,6 +46,7 @@ fun NavGraph(
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: startDestination
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
     ModalNavigationDrawer(
         drawerContent = {
             AppDrawer(
@@ -63,85 +60,99 @@ fun NavGraph(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text(text = currentRoute) },
-                    modifier = Modifier.fillMaxWidth(),
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { scope.launch { drawerState.open() } },
-                            content = {
-                                Icon(imageVector = Icons.Default.Menu, contentDescription = null)
-                            }
+                if (!allowNavigation(currentRoute)) {
+                    TopAppBar(
+                        title = { Text(text = currentRoute) },
+                        modifier = Modifier.fillMaxWidth(),
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { scope.launch { drawerState.open() } },
+                                content = {
+                                    Icon(
+                                        imageVector = Icons.Default.Menu,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
                         )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
-                )
+                }
             }
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize(),
+        ) { paddingValues ->
+            NavHost(
+                navController = navController,
+                startDestination = startDestination
             ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = startDestination
-                ) {
-                    composable(route = Destinations.welcome()) {
-                        WelcomeScreen(
-                            onGoToSignIn = { navController.navigate(route = Destinations.signIn()) },
-                            onGoToSignUp = { navController.navigate(route = Destinations.signUp()) }
-                        )
-                    }
+                composable(route = Destinations.welcome()) {
+                    WelcomeScreen(
+                        onGoToSignIn = { navController.navigate(route = Destinations.signIn()) },
+                        onGoToSignUp = { navController.navigate(route = Destinations.signUp()) }
+                    )
+                }
 
-                    composable(route = Destinations.signIn()) {
-                        SignInScreen(
-                            viewModel = createViewModel {
-                                SignInViewModel(
-                                    usersRepository = appModule.data.usersRepository
-                                )
-                            },
-                            onGoBack = {
-                                navController.navigate(Destinations.welcome()) {
-                                    popUpTo(0)
-                                }
-                            },
-                            onGoToHome = {
-                                navController.navigate(Destinations.home())
+                composable(route = Destinations.signIn()) {
+                    SignInScreen(
+                        viewModel = createViewModel {
+                            SignInViewModel(
+                                usersRepository = appModule.data.usersRepository
+                            )
+                        },
+                        onGoBack = {
+                            navController.navigate(Destinations.welcome()) {
+                                popUpTo(0)
                             }
-                        )
-                    }
+                        },
+                        onGoToHome = {
+                            navController.navigate(Destinations.home())
+                        }
+                    )
+                }
 
-                    composable(route = Destinations.signUp()) {
-                        SignUpScreen(
-                            viewModel = createViewModel {
-                                SignUpViewModel(usersRepository = appModule.data.usersRepository)
-                            },
-                            onGoBack = {
-                                navController.navigate(Destinations.welcome()) {
-                                    popUpTo(0)
-                                }
-                            },
-                            onGoToSignIn = { navController.navigate(route = Destinations.signIn()) }
-                        )
-                    }
-
-                    composable(route = Destinations.home()) {
-                        HomeScreen(
-                            viewModel = createViewModel {
-                                HomeViewModel()
+                composable(route = Destinations.signUp()) {
+                    SignUpScreen(
+                        viewModel = createViewModel {
+                            SignUpViewModel(usersRepository = appModule.data.usersRepository)
+                        },
+                        onGoBack = {
+                            navController.navigate(Destinations.welcome()) {
+                                popUpTo(0)
                             }
-                        )
-                    }
+                        },
+                        onGoToSignIn = { navController.navigate(route = Destinations.signIn()) }
+                    )
+                }
 
-                    composable(route = Destinations.settings()) {
-                        SettingsScreen()
-                    }
+                composable(route = Destinations.home()) {
+                    HomeScreen(
+                        viewModel = createViewModel {
+                            HomeViewModel()
+                        }
+                    )
+                }
+
+                composable(route = Destinations.settings()) {
+                    SettingsScreen(
+                        viewModel = createViewModel {
+                            SettingsViewModel(
+                                usersRepository = appModule.data.usersRepository
+                            )
+                        },
+                        onGoToWelcome = {
+                            navController.navigate(Destinations.welcome()) {
+                                popUpTo(0)
+                            }
+                        },
+                        paddingValues = paddingValues
+                    )
                 }
             }
         }
     }
+}
+
+private fun allowNavigation(route: String): Boolean {
+    return route == Destinations.welcome() || route == Destinations.signIn() || route == Destinations.signUp()
 }
