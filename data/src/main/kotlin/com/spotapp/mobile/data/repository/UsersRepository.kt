@@ -31,7 +31,7 @@ class UsersRepository(
             runCatching {
                 auth.createUserWithEmailAndPassword(email, password).await()
             }.fold(
-                onSuccess = { _ ->
+                onSuccess = { authResult ->
                     syncUserInfo(email, fullName)
                 }, onFailure = {
                     throw it
@@ -96,8 +96,5 @@ class UsersRepository(
     }
 
 
-    suspend fun hasUserSignedOn(): DataResult<Boolean> =
-        withContext(Dispatchers.IO) {
-            DataResult(data = auth.currentUser != null)
-        }
+    fun hasUserSignedOn(): Boolean = auth.currentUser != null
 }
