@@ -2,7 +2,6 @@ package com.spotapp.mobile.data.repository
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.spotapp.mobile.data.DataResult
 import com.spotapp.mobile.data.sources.database.users.UserDao
 import com.spotapp.mobile.data.sources.database.users.UserDto
 import com.spotapp.mobile.data.sources.database.users.UserInfoDto
@@ -32,6 +31,9 @@ class UsersRepository(
                 auth.createUserWithEmailAndPassword(email, password).await()
             }.fold(
                 onSuccess = { authResult ->
+                    authResult.user?.getIdToken(true)?.await()?.let {
+                        Log.d("GetTokenResult", "token => ${it.token}")
+                    }
                     syncUserInfo(email, fullName)
                 }, onFailure = {
                     throw it
@@ -45,10 +47,13 @@ class UsersRepository(
             runCatching {
                 auth.signInWithEmailAndPassword(email, password).await()
             }.fold(
-                onSuccess = {
+                onSuccess = { authResult ->
                     syncUserInfo(email)
                     userPreferencesManager.persist {
                         it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
+                    }
+                    authResult.user?.getIdToken(true)?.await()?.let {
+                        Log.d("GetTokenResult", "token => ${it.token}")
                     }
                     // TODO: Implement firestore synchronization
                 }, onFailure = {
