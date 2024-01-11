@@ -45,10 +45,10 @@ class SignUpViewModel(
                         isLoading = false
                     )
                 }
-            }.onFailure {
+            }.onFailure { throwable ->
                 viewModelState.update {
                     it.copy(
-                        errorMessage = it.errorMessage,
+                        errorMessage = throwable.message,
                         isLoading = false
                     )
                 }

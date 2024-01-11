@@ -30,8 +30,8 @@ class SettingsViewModel(
     fun signOut() {
         runCatching {
             usersRepository.signOutFirebase()
-        }.onFailure {
-            viewModelState.update { it.copy(errorMessage = it.errorMessage) }
+        }.onFailure { throwable ->
+            viewModelState.update { it.copy(errorMessage = throwable.message) }
         }.onSuccess {
             viewModelState.update { it.copy(isLoggedOut = true) }
         }

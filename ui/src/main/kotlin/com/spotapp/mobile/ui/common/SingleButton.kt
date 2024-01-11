@@ -1,5 +1,6 @@
 package com.spotapp.mobile.ui.common
 
+import androidx.annotation.ColorRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
@@ -17,6 +18,7 @@ import com.spotapp.mobile.ui.R
 fun SingleButton(
     onClick: () -> Unit = {},
     buttonText: String,
+    @ColorRes containerColor: Int = R.color.mainColor,
 ) {
     Button(
         onClick = onClick,
@@ -24,7 +26,7 @@ fun SingleButton(
             .fillMaxWidth()
             .height(50.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.mainColor),
+            containerColor = colorResource(id = containerColor),
             contentColor = Color.White
         )
     ) {

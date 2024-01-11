@@ -63,6 +63,21 @@ class UsersRepository(
         }
     }
 
+    suspend fun signInAnonymously() {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                auth.signInAnonymously().await()
+            }.onSuccess {
+                userPreferencesManager.persist {
+                    it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
+                }
+                // TODO: Implement firestore synchronization
+            }.onFailure {
+                throw it
+            }
+        }
+    }
+
     fun signOutFirebase() {
         runCatching {
             auth.signOut()
@@ -99,7 +114,6 @@ class UsersRepository(
             it[PreferencesKeys.userEmail] = email
         }
     }
-
 
     fun hasUserSignedOn(): Boolean = auth.currentUser != null
 }

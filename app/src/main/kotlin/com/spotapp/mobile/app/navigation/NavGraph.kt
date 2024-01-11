@@ -33,6 +33,7 @@ import com.spotapp.mobile.ui.feature.home.HomeViewModel
 import com.spotapp.mobile.ui.feature.settings.SettingsScreen
 import com.spotapp.mobile.ui.feature.settings.SettingsViewModel
 import com.spotapp.mobile.ui.feature.welcome.WelcomeScreen
+import com.spotapp.mobile.ui.feature.welcome.WelcomeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,6 +89,14 @@ fun NavGraph(
             ) {
                 composable(route = Destinations.welcome()) {
                     WelcomeScreen(
+                        viewModel = createViewModel {
+                            WelcomeViewModel(
+                                usersRepository = appModule.data.usersRepository
+                            )
+                        },
+                        onGoToHome = {
+                            navController.navigate(Destinations.home()) { popUpTo(0) }
+                        },
                         onGoToSignIn = { navController.navigate(route = Destinations.signIn()) },
                         onGoToSignUp = { navController.navigate(route = Destinations.signUp()) }
                     )

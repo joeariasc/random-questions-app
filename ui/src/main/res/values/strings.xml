@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="welcome">Welcome</string>
+    <string name="welcome_summary">Sign In or create a new account</string>
+    <string name="go_to_sign_in">Go to Sign In</string>
+    <string name="go_to_sign_up">No account yet? Register here</string>
+    <string name="sign_in_anonymously">sign In Anonymously</string>
     <string name="wait">Wait!</string>
     <string name="generic_error_message">an error occurred, please try again</string>
     <string name="confirm">Confirm</string>

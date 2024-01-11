@@ -39,10 +39,10 @@ class SignInViewModel(private val usersRepository: UsersRepository) : ViewModel(
                         isLoading = false
                     )
                 }
-            }.onFailure {
+            }.onFailure { throwable ->
                 viewModelState.update {
                     it.copy(
-                        errorMessage = it.errorMessage,
+                        errorMessage = throwable.message,
                         isLoading = false
                     )
                 }
