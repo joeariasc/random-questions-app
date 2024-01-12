@@ -33,13 +33,15 @@ class UserPreferencesManagerImpl(context: Context) : UserPreferencesManager {
     }.map { preferences ->
         val sessionStatus =
             preferences[PreferencesKeys.sessionStatus] ?: SessionState.UNREGISTERED.name
-        val userName = preferences[PreferencesKeys.userName]
         val userEmail = preferences[PreferencesKeys.userEmail]
+        val userPassword = preferences[PreferencesKeys.userPassword]
+        val rememberCredentials = preferences[PreferencesKeys.rememberCredentials]
 
         UserPreferences(
             sessionStatus = SessionState.valueOf(sessionStatus),
-            userName = userName,
             userEmail = userEmail,
+            userPassword = userPassword,
+            rememberCredentials = rememberCredentials ?: false
         )
     }
 

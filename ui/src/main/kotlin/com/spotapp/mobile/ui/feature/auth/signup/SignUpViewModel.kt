@@ -17,7 +17,7 @@ class SignUpViewModel(
 
     val uiState = viewModelState.asStateFlow()
 
-    fun onSignUp(fullName: String, email: String, password: String) {
+    fun onSignUp(email: String, password: String) {
         if (
             password.isBlank() ||
             password.length < 5 ||
@@ -36,7 +36,7 @@ class SignUpViewModel(
                 )
             }
             runCatching {
-                usersRepository.signUpUserFirebase(fullName, email, password)
+                usersRepository.signUpUserFirebase(email, password)
             }.onSuccess {
                 viewModelState.update {
                     it.copy(

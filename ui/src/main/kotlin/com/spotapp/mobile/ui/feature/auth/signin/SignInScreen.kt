@@ -1,5 +1,6 @@
 package com.spotapp.mobile.ui.feature.auth.signin
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,9 +55,6 @@ fun SignInScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    var email by remember { mutableStateOf("") }
-    var pass by remember { mutableStateOf("") }
-
     if (uiState.errorMessage != null) {
         StandardAlertDialog(
             onDismissRequest = viewModel::cleanError,
@@ -77,13 +75,15 @@ fun SignInScreen(
         HeadLineTitle(text = stringResource(id = R.string.welcome_back))
 
         InputStringField(
-            value = email,
-            onValueChange = { email = it },
+            value = uiState.userEmail ?: "",
+            onValueChange = { viewModel.setUserEmail(it) },
             label = stringResource(id = R.string.email_address_label),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-        InputPasswordField(value = pass, onValueChange = { pass = it })
+        InputPasswordField(
+            value = uiState.userPassword ?: "",
+            onValueChange = { viewModel.setUserPassword(it) })
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -92,18 +92,14 @@ fun SignInScreen(
         ) {
             Text(text = stringResource(id = R.string.remember_label))
 
-            var switchState by remember {
-                mutableStateOf(false)
-            }
-
-            Switch(checked = switchState, onCheckedChange = {
+            Switch(checked = uiState.rememberCredentials, onCheckedChange = {
                 viewModel.cleanError()
-                switchState = it
+                viewModel.setRememberCredentials(it)
             })
         }
 
         SingleButton(
-            onClick = { viewModel.onSignIn(email, pass) },
+            onClick = viewModel::onSignIn,
             buttonText = stringResource(id = R.string.sign_in_label)
         )
 

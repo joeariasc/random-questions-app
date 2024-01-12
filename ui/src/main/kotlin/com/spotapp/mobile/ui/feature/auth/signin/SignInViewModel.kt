@@ -1,5 +1,6 @@
 package com.spotapp.mobile.ui.feature.auth.signin
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.spotapp.mobile.data.repository.UsersRepository
@@ -15,12 +16,34 @@ class SignInViewModel(private val usersRepository: UsersRepository) : ViewModel(
 
     val uiState = viewModelState.asStateFlow()
 
-    fun onSignIn(email: String, password: String) {
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersRepository.getUserCredentials()
+                .let { (rememberCredentials, userEmail, userPassword) ->
+                    Log.d(
+                        "signInUserFirebase",
+                        "userEmail => $userEmail, userPassword => $userPassword, remember credentials => $rememberCredentials"
+                    )
+                    if (rememberCredentials) {
+                        viewModelState.update {
+                            it.copy(
+                                userEmail = userEmail,
+                                userPassword = userPassword,
+                            )
+                        }
+                    }
+                    viewModelState.update { it.copy(rememberCredentials = rememberCredentials) }
+                }
+        }
+    }
+
+    fun onSignIn() {
+        val state = viewModelState.value
         if (
-            password.isBlank() ||
-            password.length < 5 ||
-            !isValidEmail(email) ||
-            email.isBlank()
+            state.userPassword.isNullOrBlank() ||
+            state.userPassword.length < 5 ||
+            !isValidEmail(state.userEmail) ||
+            state.userEmail.isNullOrBlank()
         ) {
             viewModelState.update {
                 it.copy(errorMessage = "Email or Password invalid")
@@ -30,7 +53,11 @@ class SignInViewModel(private val usersRepository: UsersRepository) : ViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                usersRepository.signInUserFirebase(email, password)
+                usersRepository.signInUserFirebase(
+                    state.userEmail,
+                    state.userPassword,
+                    state.rememberCredentials
+                )
             }.onSuccess {
                 viewModelState.update {
                     it.copy(
@@ -48,6 +75,18 @@ class SignInViewModel(private val usersRepository: UsersRepository) : ViewModel(
                 }
             }
         }
+    }
+
+    fun setUserEmail(email: String) {
+        viewModelState.update { it.copy(userEmail = email) }
+    }
+
+    fun setUserPassword(password: String) {
+        viewModelState.update { it.copy(userPassword = password) }
+    }
+
+    fun setRememberCredentials(remember: Boolean) {
+        viewModelState.update { it.copy(rememberCredentials = remember) }
     }
 
     fun cleanError() {

@@ -12,6 +12,7 @@ import com.spotapp.mobile.data.sources.preferences.UserPreferencesManager
 import com.spotapp.mobile.data.sources.preferences.model.SessionState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -22,7 +23,6 @@ class UsersRepository(
 ) {
 
     suspend fun signUpUserFirebase(
-        fullName: String,
         email: String,
         password: String
     ) {
@@ -39,7 +39,17 @@ class UsersRepository(
         }
     }
 
-    suspend fun signInUserFirebase(email: String, password: String) {
+    suspend fun getUserCredentials(): Triple<Boolean, String?, String?> {
+        return userPreferencesManager.userPreferences.first().let {
+            Triple(it.rememberCredentials, it.userEmail, it.userPassword)
+        }
+    }
+
+    suspend fun signInUserFirebase(
+        email: String,
+        password: String,
+        rememberCredentials: Boolean = false
+    ) {
         withContext(Dispatchers.IO) {
             runCatching {
                 auth.signInWithEmailAndPassword(email, password).await()
@@ -47,6 +57,14 @@ class UsersRepository(
                 onSuccess = {
                     userPreferencesManager.persist {
                         it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
+                        it[PreferencesKeys.rememberCredentials] = rememberCredentials
+                        if (rememberCredentials) {
+                            it[PreferencesKeys.userEmail] = email
+                            it[PreferencesKeys.userPassword] = password
+                        } else {
+                            it.remove(PreferencesKeys.userEmail)
+                            it.remove(PreferencesKeys.userPassword)
+                        }
                     }
                 }, onFailure = {
                     throw it

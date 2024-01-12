@@ -54,7 +54,6 @@ fun SignUpScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
 
@@ -78,12 +77,6 @@ fun SignUpScreen(
         HeadLineTitle(text = stringResource(id = R.string.new_account))
 
         InputStringField(
-            value = name,
-            onValueChange = { name = it },
-            label = stringResource(id = R.string.new_name_label)
-        )
-
-        InputStringField(
             value = email,
             onValueChange = { email = it },
             label = stringResource(id = R.string.email_address_label),
@@ -93,7 +86,7 @@ fun SignUpScreen(
         InputPasswordField(value = pass, onValueChange = { pass = it })
 
         SingleButton(
-            onClick = { viewModel.onSignUp(name, email, pass) },
+            onClick = { viewModel.onSignUp(email, pass) },
             buttonText = stringResource(id = R.string.sign_up)
         )
 
