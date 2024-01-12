@@ -1,8 +1,10 @@
 package com.spotapp.mobile.data.repository
 
 import android.util.Log
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.spotapp.mobile.data.sources.database.users.UserDao
+import com.google.firebase.auth.userProfileChangeRequest
+import com.spotapp.mobile.data.models.User
 import com.spotapp.mobile.data.sources.database.users.UserDto
 import com.spotapp.mobile.data.sources.database.users.UserInfoDto
 import com.spotapp.mobile.data.sources.preferences.PreferencesKeys
@@ -10,12 +12,10 @@ import com.spotapp.mobile.data.sources.preferences.UserPreferencesManager
 import com.spotapp.mobile.data.sources.preferences.model.SessionState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class UsersRepository(
-    private val userDao: UserDao,
     private val auth: FirebaseAuth,
     private val userPreferencesManager: UserPreferencesManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -26,15 +26,12 @@ class UsersRepository(
         email: String,
         password: String
     ) {
-        return withContext(coroutineDispatcher) {
+        withContext(coroutineDispatcher) {
             runCatching {
                 auth.createUserWithEmailAndPassword(email, password).await()
             }.fold(
-                onSuccess = { authResult ->
-                    authResult.user?.getIdToken(true)?.await()?.let {
-                        Log.d("GetTokenResult", "token => ${it.token}")
-                    }
-                    syncUserInfo(email, fullName)
+                onSuccess = {
+                    Log.d("signUpUserFirebase", "Success!")
                 }, onFailure = {
                     throw it
                 }
@@ -43,19 +40,14 @@ class UsersRepository(
     }
 
     suspend fun signInUserFirebase(email: String, password: String) {
-        return withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             runCatching {
                 auth.signInWithEmailAndPassword(email, password).await()
             }.fold(
-                onSuccess = { authResult ->
-                    syncUserInfo(email)
+                onSuccess = {
                     userPreferencesManager.persist {
                         it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
                     }
-                    authResult.user?.getIdToken(true)?.await()?.let {
-                        Log.d("GetTokenResult", "token => ${it.token}")
-                    }
-                    // TODO: Implement firestore synchronization
                 }, onFailure = {
                     throw it
                 }
@@ -71,7 +63,6 @@ class UsersRepository(
                 userPreferencesManager.persist {
                     it[PreferencesKeys.sessionStatus] = SessionState.LOGGED_IN.name
                 }
-                // TODO: Implement firestore synchronization
             }.onFailure {
                 throw it
             }
@@ -90,28 +81,54 @@ class UsersRepository(
         )
     }
 
-    suspend fun getUserInformation(): UserDto {
-        val preferences = userPreferencesManager.userPreferences.first()
-        return userDao.findByEmail(preferences.userEmail ?: "")
+    fun getUserInformation(): User? {
+        return auth.currentUser?.let {
+            User(
+                email = it.email,
+                name = it.displayName,
+                isAnonymous = it.isAnonymous,
+            )
+        }
     }
 
-    private suspend fun syncUserInfo(email: String, fullName: String? = null) {
-        if (fullName == null) {
-            // Sync user information
+    suspend fun updateUserName(name: String) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                userProfileChangeRequest {
+                    displayName = name
+                }.let {
+                    auth.currentUser?.updateProfile(it)?.await()
+                }
+            }.onFailure {
+                throw it
+            }
         }
+    }
 
-        UserDto(
-            userInfo = UserInfoDto(
-                email = email,
-                name = fullName ?: "",
-            )
-        ).also {
-            userDao.save(it)
+    suspend fun updateUserPassword(oldPassWord: String, newPassword: String) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                auth.currentUser!!.reauthenticate(
+                    EmailAuthProvider
+                        .getCredential(auth.currentUser!!.email!!, oldPassWord)
+                ).await()
+            }.onFailure {
+                Log.d("updateUserEmail", "Failure! reauthenticate - ${it.message}")
+                throw it
+            }.onSuccess {
+                Log.d("updateUserEmail", "Success! reauthenticate")
+                updateUserPassword(newPassword)
+            }
         }
+    }
 
-        userPreferencesManager.persist {
-            it[PreferencesKeys.sessionStatus] = SessionState.REGISTERED.name
-            it[PreferencesKeys.userEmail] = email
+    private suspend fun updateUserPassword(newPassword: String) {
+        runCatching {
+            auth.currentUser!!.updatePassword(newPassword).await()
+        }.onSuccess {
+            Log.d("updateUserEmail", "Success! updateUserPassword")
+        }.onFailure {
+            throw it
         }
     }
 

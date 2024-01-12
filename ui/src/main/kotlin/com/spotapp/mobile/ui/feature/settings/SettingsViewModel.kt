@@ -2,6 +2,7 @@ package com.spotapp.mobile.ui.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.userProfileChangeRequest
 import com.spotapp.mobile.data.repository.UsersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ class SettingsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             viewModelState.update {
                 it.copy(
-                    userDto = usersRepository.getUserInformation()
+                    user = usersRepository.getUserInformation()
                 )
             }
         }

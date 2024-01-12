@@ -23,5 +23,5 @@ class DataModule(private val systemModule: SystemModule) {
         get() = UserPreferencesManagerImpl.getInstance(systemModule.applicationContext)
 
     val usersRepository: UsersRepository
-        get() = UsersRepository(appDatabase.userDao(), firebaseAuth, userPreferencesManager)
+        get() = UsersRepository(firebaseAuth, userPreferencesManager)
 }

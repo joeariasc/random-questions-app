@@ -18,6 +18,8 @@ object Destinations {
 
     fun settings(): Route = "/settings"
 
+    fun editProfile(): Route = "/edit-profile"
+
     suspend fun startDestination(getCurrentAppState: GetCurrentAppState): String =
         if (getCurrentAppState()) home() else welcome()
 }

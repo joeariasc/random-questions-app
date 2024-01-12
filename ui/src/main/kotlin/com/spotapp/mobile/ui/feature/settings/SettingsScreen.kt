@@ -3,6 +3,7 @@ package com.spotapp.mobile.ui.feature.settings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,7 +43,8 @@ import com.spotapp.mobile.ui.common.StandardAlertDialog
 fun SettingsScreen(
     viewModel: SettingsViewModel,
     onGoToWelcome: () -> Unit,
-    paddingValues: PaddingValues
+    goToEditProfile: () -> Unit,
+    paddingValues: PaddingValues,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -65,7 +67,13 @@ fun SettingsScreen(
     ) {
         ProfilePic()
         Card(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier
+                .padding(12.dp)
+                .clickable {
+                    if (uiState.user?.isAnonymous == false) {
+                        goToEditProfile()
+                    }
+                },
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFFBFBFBF)
             ),
@@ -83,9 +91,15 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
+                    Text(text = uiState.user?.email ?: "No email")
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
                     Text(
-                        text = uiState.userDto?.userInfo?.name.let {
-                            if (it.isNullOrEmpty()) "No Name" else it
+                        text = uiState.user?.name.let {
+                            if (it.isNullOrEmpty()) "No name" else it
                         }
                     )
                 }
@@ -93,13 +107,7 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Text(text = "Software Engineer")
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Text(text = uiState.userDto?.userInfo?.email ?: "No Email")
+                    Text(text = if (uiState.user?.isAnonymous == true) "Anonymous" else "No Anonymous")
                 }
             }
         }

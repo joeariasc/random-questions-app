@@ -32,6 +32,8 @@ import com.spotapp.mobile.ui.feature.home.HomeScreen
 import com.spotapp.mobile.ui.feature.home.HomeViewModel
 import com.spotapp.mobile.ui.feature.settings.SettingsScreen
 import com.spotapp.mobile.ui.feature.settings.SettingsViewModel
+import com.spotapp.mobile.ui.feature.settings.updateprofile.UpdateProfileScreen
+import com.spotapp.mobile.ui.feature.settings.updateprofile.UpdateProfileViewModel
 import com.spotapp.mobile.ui.feature.welcome.WelcomeScreen
 import com.spotapp.mobile.ui.feature.welcome.WelcomeViewModel
 import kotlinx.coroutines.launch
@@ -54,6 +56,7 @@ fun NavGraph(
                 route = currentRoute,
                 navigateToHome = { navController.navigate(Destinations.home()) },
                 navigateToSettings = { navController.navigate(Destinations.settings()) },
+                navigateToEditProfile = { navController.navigate(Destinations.editProfile()) },
                 closeDrawer = { scope.launch { drawerState.close() } }
             )
         },
@@ -153,6 +156,16 @@ fun NavGraph(
                             navController.navigate(Destinations.welcome()) {
                                 popUpTo(0)
                             }
+                        },
+                        goToEditProfile = { navController.navigate(Destinations.editProfile()) },
+                        paddingValues = paddingValues
+                    )
+                }
+
+                composable(route = Destinations.editProfile()) {
+                    UpdateProfileScreen(
+                        viewModel = createViewModel {
+                            UpdateProfileViewModel(usersRepository = appModule.data.usersRepository)
                         },
                         paddingValues = paddingValues
                     )

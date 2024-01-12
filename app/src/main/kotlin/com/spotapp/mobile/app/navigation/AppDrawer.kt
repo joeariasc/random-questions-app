@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ fun AppDrawer(
     modifier: Modifier = Modifier,
     navigateToHome: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToEditProfile: () -> Unit,
     closeDrawer: () -> Unit
 ) {
     ModalDrawerSheet(modifier = Modifier) {
@@ -68,6 +70,22 @@ fun AppDrawer(
                 closeDrawer()
             },
             icon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
+            shape = MaterialTheme.shapes.small
+        )
+
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.update_information),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            },
+            selected = route == Destinations.editProfile(),
+            onClick = {
+                navigateToEditProfile()
+                closeDrawer()
+            },
+            icon = { Icon(imageVector = Icons.Default.Edit, contentDescription = null) },
             shape = MaterialTheme.shapes.small
         )
     }

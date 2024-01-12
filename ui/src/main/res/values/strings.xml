@@ -6,7 +6,9 @@
     <string name="go_to_sign_up">No account yet? Register here</string>
     <string name="sign_in_anonymously">sign In Anonymously</string>
     <string name="wait">Wait!</string>
+    <string name="done">Done!</string>
     <string name="generic_error_message">an error occurred, please try again</string>
+    <string name="successful_update">Successful Update</string>
     <string name="confirm">Confirm</string>
     <string name="dismiss">Dismiss</string>
     <string name="welcome_back">Welcome Back!</string>
@@ -19,4 +21,11 @@
     <string name="new_password_label">Create password</string>
     <string name="sign_up">Sign Up!</string>
     <string name="sign_out">Sign Out</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="update_user_name">Update User Name</string>
+    <string name="update_user_password">Update User Password</string>
+    <string name="update_email_summary">You need to re-authenticate to update the Password.</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
 </resources>
