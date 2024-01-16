@@ -28,4 +28,5 @@
     <string name="update_email_summary">You need to re-authenticate to update the Password.</string>
     <string name="current_password">Current Password</string>
     <string name="new_password">New Password</string>
+    <string name="anonymous_warning">You are not allowed to perform this action. You logged in as Guest</string>
 </resources>

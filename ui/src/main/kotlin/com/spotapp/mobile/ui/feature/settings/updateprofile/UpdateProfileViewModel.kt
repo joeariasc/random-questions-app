@@ -3,6 +3,7 @@ package com.spotapp.mobile.ui.feature.settings.updateprofile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.spotapp.mobile.data.models.User
 import com.spotapp.mobile.data.repository.UsersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,10 +13,10 @@ import kotlinx.coroutines.launch
 
 data class UiState(
     val errorMessage: String? = null,
-    val userName: String? = null,
-    val userEmail: String? = null,
+    val user: User? = null,
     val showConfirmationModal: Boolean = false,
     val showEditPasswordDialog: Boolean = false,
+    val showAnonymousDialog: Boolean = false,
 )
 
 class UpdateProfileViewModel(
@@ -29,14 +30,10 @@ class UpdateProfileViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            usersRepository.getUserInformation()?.let { user ->
-                Log.d("UpdateProfileViewModel", "user => $user")
-                viewModelState.update {
-                    it.copy(
-                        userName = user.name,
-                        userEmail = user.email,
-                    )
-                }
+            viewModelState.update {
+                it.copy(
+                    user = usersRepository.getUserInformation()
+                )
             }
         }
     }
@@ -62,10 +59,20 @@ class UpdateProfileViewModel(
     }
 
     fun showUpdatePasswordDialog() {
-        viewModelState.update {
-            it.copy(
-                showEditPasswordDialog = true,
-            )
+        viewModelState.value.user?.let { user ->
+            if (user.isAnonymous) {
+                viewModelState.update {
+                    it.copy(
+                        showAnonymousDialog = true,
+                    )
+                }
+            } else {
+                viewModelState.update {
+                    it.copy(
+                        showEditPasswordDialog = true,
+                    )
+                }
+            }
         }
     }
 
@@ -101,6 +108,14 @@ class UpdateProfileViewModel(
 
     fun hideConfirmationModal() {
         viewModelState.update { it.copy(showConfirmationModal = false) }
+    }
+
+    fun hideAnonymousDialog() {
+        viewModelState.update {
+            it.copy(
+                showAnonymousDialog = false,
+            )
+        }
     }
 
     fun cleanError() {

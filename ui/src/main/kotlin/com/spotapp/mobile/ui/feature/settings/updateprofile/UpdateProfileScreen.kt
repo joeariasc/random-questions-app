@@ -52,7 +52,7 @@ fun UpdateProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    var name by remember { mutableStateOf(uiState.userName) }
+    var name by remember { mutableStateOf(uiState.user?.name) }
 
     if (uiState.errorMessage != null) {
         StandardAlertDialog(
@@ -71,9 +71,16 @@ fun UpdateProfileScreen(
     }
 
     if (uiState.showEditPasswordDialog) {
-        UpdateEmailDialog(
+        UpdatePasswordDialog(
             onDismissRequest = viewModel::hideUpdatePasswordDialog,
             onConfirmation = viewModel::updateUserPassword,
+        )
+    }
+
+    if (uiState.showAnonymousDialog) {
+        StandardAlertDialog(
+            onDismissRequest = viewModel::hideAnonymousDialog,
+            dialogText = stringResource(id = R.string.anonymous_warning),
         )
     }
 
@@ -89,8 +96,6 @@ fun UpdateProfileScreen(
                 .padding(12.dp),
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -141,7 +146,7 @@ fun UpdateProfileScreen(
 }
 
 @Composable
-fun UpdateEmailDialog(
+private fun UpdatePasswordDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: (String, String) -> Unit,
 ) {
