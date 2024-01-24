@@ -104,6 +104,7 @@ class UsersRepository(
     fun getUserInformation(): User? {
         return auth.currentUser?.let {
             User(
+                id = it.uid,
                 email = it.email,
                 name = it.displayName,
                 isAnonymous = it.isAnonymous,
