@@ -11,6 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.spotapp.mobile.data.models.User
 import com.spotapp.mobile.data.sources.remote.firestore.model.Question
 import com.spotapp.mobile.data.sources.remote.firestore.model.UserObjectType
+import com.spotapp.mobile.data.sources.remote.firestore.model.VisitedQuestions
 import kotlinx.coroutines.tasks.await
 
 class FirestoreService(private val auth: FirebaseAuth) {
@@ -20,6 +21,7 @@ class FirestoreService(private val auth: FirebaseAuth) {
 
     private val usersPath = "test/global/users"
     private val questionsPath = "test/global/questions"
+    private val visitedQuestionsPath = "test/global/visitedQuestions"
 
     fun subscribeToRealtimeUpdates() {
         val collectionPaths = mutableListOf(
@@ -40,21 +42,6 @@ class FirestoreService(private val auth: FirebaseAuth) {
                 activeSnapshotListenerRegistrations.add(listenerRegistration)
             }
         }
-    }
-
-    suspend fun getUserList(): List<UserObjectType> {
-        return runCatching {
-            firestoreDB.collection(usersPath).orderBy("email")
-                .whereNotEqualTo("email", auth.currentUser!!.email).get(Source.SERVER).await()
-                .toObjects(UserObjectType::class.java)
-
-        }.fold(onSuccess = {
-            Log.d("FirestoreService", "getUserList success, list: ${it.size}")
-            it
-        }, onFailure = {
-            Log.d("FirestoreService", "getUserList failure, error: ${it.message}")
-            throw it
-        })
     }
 
     suspend fun addUser(user: User) {
@@ -83,33 +70,89 @@ class FirestoreService(private val auth: FirebaseAuth) {
         }
     }
 
-    suspend fun getQuestionsList(): List<Question> {
+    private suspend fun getVisitedQuestionsIds(): List<String> {
+        runCatching {
+            retrieveVisitedQuestions()
+        }.fold(
+            onSuccess = { visitedQuestions ->
+                return visitedQuestions.filter {
+                    it.userId == auth.currentUser!!.uid
+                }.map {
+                    it.questionId
+                }
+                /*retrieveQuestions().filter { question ->
+                    question.id !in visitedQuestionIdsForUser
+                }*/
+            }, onFailure = {
+                throw it
+            }
+        )
+    }
+
+    suspend fun retrieveQuestions(): List<Question> {
         return runCatching {
             firestoreDB.collection(questionsPath)
                 .get().await().toObjects(Question::class.java)
         }.fold(
-            onSuccess = {
-                Log.d("FirestoreService", "getQuestionsList success, list: ${it.size}")
-                it
+            onSuccess = { questions ->
+                Log.d("FirestoreService", "getQuestionsList success, list: ${questions.size}")
+                questions.filter { question ->
+                    question.id !in getVisitedQuestionsIds()
+                }
             },
             onFailure = {
                 Log.d("FirestoreService", "getQuestionsList failure, error: ${it.message}")
                 throw it
             }
         )
+    }
 
+    private suspend fun retrieveVisitedQuestions(): List<VisitedQuestions> {
+        return runCatching {
+            firestoreDB.collection(visitedQuestionsPath)
+                .get().await().toObjects(VisitedQuestions::class.java)
+        }.fold(
+            onSuccess = {
+                Log.d("FirestoreService", "retrieveVisitedQuestions success, list: ${it.size}")
+                it
+            },
+            onFailure = {
+                Log.d("FirestoreService", "retrieveVisitedQuestions failure, error: ${it.message}")
+                throw it
+            }
+        )
+    }
+
+    suspend fun registerVisitedQuestion(questionId: String) {
+        runCatching {
+            firestoreDB.collection(visitedQuestionsPath).add(
+                mapOf(
+                    "questionId" to questionId,
+                    "userId" to auth.currentUser!!.uid,
+                )
+            ).await()
+        }.onSuccess { documentReference ->
+            Log.d(
+                "FirestoreService",
+                "registerVisitedQuestion success, document reference => ${documentReference.id}"
+            )
+
+        }.onFailure {
+            throw it
+        }
     }
 
     private fun mapQuestionToMap(question: Question): Map<String, Any> {
         return mapOf(
+            "id" to question.id,
             "questionText" to question.questionText,
             "options" to question.options.map { option ->
                 mapOf(
+                    "id" to option.id,
                     "optionText" to option.optionText,
-                    "isCorrect" to option.isCorrect
                 )
             },
-            "userId" to question.userId,
+            "idCorrectOption" to question.idCorrectOption
         )
     }
 }
