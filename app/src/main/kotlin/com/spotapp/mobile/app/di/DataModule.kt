@@ -37,6 +37,6 @@ class DataModule(private val systemModule: SystemModule) {
         )
 
     val gameRepository: GameRepository
-        get() = GameRepository(firestoreService, firebaseDBService, firebaseAuth)
+        get() = GameRepository(firestoreService, firebaseDBService)
 
 }
