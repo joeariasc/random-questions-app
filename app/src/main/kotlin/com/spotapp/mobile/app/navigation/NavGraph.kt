@@ -126,7 +126,7 @@ fun NavGraph(
                 composable(route = Destinations.signUp()) {
                     SignUpScreen(
                         viewModel = createViewModel {
-                            SignUpViewModel(usersRepository = appModule.data.usersRepository)
+                            SignUpViewModel(registerUser = appModule.domain.registerUser)
                         },
                         onGoBack = {
                             navController.navigate(Destinations.welcome()) {
@@ -140,8 +140,12 @@ fun NavGraph(
                 composable(route = Destinations.home()) {
                     HomeScreen(
                         viewModel = createViewModel {
-                            HomeViewModel()
-                        }
+                            HomeViewModel(
+                                gameRepository = appModule.data.gameRepository,
+                                quizMaster = appModule.domain.quizMaster,
+                                userRanking = appModule.data.rankinUpdate
+                            )
+                        }, paddingValues = paddingValues
                     )
                 }
 
@@ -165,7 +169,10 @@ fun NavGraph(
                 composable(route = Destinations.editProfile()) {
                     UpdateProfileScreen(
                         viewModel = createViewModel {
-                            UpdateProfileViewModel(usersRepository = appModule.data.usersRepository)
+                            UpdateProfileViewModel(
+                                updateUserNameUseCase = appModule.domain.updateUserName,
+                                usersRepository = appModule.data.usersRepository
+                            )
                         },
                         paddingValues = paddingValues
                     )
