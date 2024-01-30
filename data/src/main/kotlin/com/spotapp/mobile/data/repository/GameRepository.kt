@@ -3,6 +3,7 @@ package com.spotapp.mobile.data.repository
 import android.util.Log
 import com.spotapp.mobile.data.sources.remote.firestore.FirestoreService
 import com.spotapp.mobile.data.sources.remote.firebasedatabase.FDatabaseService
+import com.spotapp.mobile.data.sources.remote.firebasedatabase.model.UserData
 import com.spotapp.mobile.data.sources.remote.firestore.model.Question
 
 class GameRepository(
@@ -11,6 +12,9 @@ class GameRepository(
 ) {
 
     suspend fun getQuestionList(): List<Question> = firestoreService.retrieveQuestions()
+
+    suspend fun getRanking(): List<UserData> =
+        firebaseDB.getRanking().sortedByDescending { it.score }
 
     suspend fun registerQuestion(questionId: String) {
         runCatching {
