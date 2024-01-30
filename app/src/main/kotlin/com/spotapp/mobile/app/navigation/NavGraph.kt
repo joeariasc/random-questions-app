@@ -141,7 +141,9 @@ fun NavGraph(
                     HomeScreen(
                         viewModel = createViewModel {
                             HomeViewModel(
-                                gameRepository = appModule.data.gameRepository
+                                gameRepository = appModule.data.gameRepository,
+                                quizMaster = appModule.domain.quizMaster,
+                                userRanking = appModule.data.rankinUpdate
                             )
                         }, paddingValues = paddingValues
                     )
