@@ -76,9 +76,10 @@ class FDatabaseService(
         }.onSuccess { snapshot ->
             if (snapshot?.exists() == true) {
                 val userData = snapshot.getValue(UserData::class.java)
+                val score = if (scored) (userData?.score!!.plus(1)) else userData?.score!!
                 findAndSetScore(
-                    score = if (scored) (userData?.score!!.plus(1)) else 0,
-                    email = userData?.email!!
+                    score = if (scored) (userData.score.plus(1)) else score,
+                    email = userData.email!!
                 )
             } else {
                 findAndSetScore(

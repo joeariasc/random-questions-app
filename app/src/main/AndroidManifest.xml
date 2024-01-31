@@ -28,7 +28,8 @@
         <activity
             android:name="com.spotapp.mobile.app.MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.App.Spot" />
+            android:theme="@style/Theme.App.Spot"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
