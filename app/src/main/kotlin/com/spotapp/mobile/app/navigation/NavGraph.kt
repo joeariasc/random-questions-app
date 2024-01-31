@@ -60,11 +60,12 @@ fun NavGraph(
                 closeDrawer = { scope.launch { drawerState.close() } }
             )
         },
+        gesturesEnabled = allowNavigation(currentRoute),
         drawerState = drawerState,
     ) {
         Scaffold(
             topBar = {
-                if (!allowNavigation(currentRoute)) {
+                if (allowNavigation(currentRoute)) {
                     TopAppBar(
                         title = { Text(text = currentRoute) },
                         modifier = Modifier.fillMaxWidth(),
@@ -183,5 +184,5 @@ fun NavGraph(
 }
 
 private fun allowNavigation(route: String): Boolean {
-    return route == Destinations.welcome() || route == Destinations.signIn() || route == Destinations.signUp()
+    return !(route == Destinations.welcome() || route == Destinations.signIn() || route == Destinations.signUp())
 }
