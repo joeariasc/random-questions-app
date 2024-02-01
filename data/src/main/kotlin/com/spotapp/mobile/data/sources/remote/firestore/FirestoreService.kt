@@ -5,12 +5,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.spotapp.mobile.data.models.User
 import com.spotapp.mobile.data.sources.remote.firestore.model.Question
-import com.spotapp.mobile.data.sources.remote.firestore.model.UserObjectType
 import com.spotapp.mobile.data.sources.remote.firestore.model.VisitedQuestions
 import kotlinx.coroutines.tasks.await
 
@@ -80,9 +78,6 @@ class FirestoreService(private val auth: FirebaseAuth) {
                 }.map {
                     it.questionId
                 }
-                /*retrieveQuestions().filter { question ->
-                    question.id !in visitedQuestionIdsForUser
-                }*/
             }, onFailure = {
                 throw it
             }
